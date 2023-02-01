@@ -1,0 +1,23 @@
+.cell {
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	position: absolute;	
+	/* display: inline-block; */
+	padding: 0;
+	width: 56px;
+	height: 97px;
+	background-color: inherit;
+}
+
+.rot1 {
+	background-color: inherit;
+	transform: rotateZ(60deg);
+}
+
+.rot2 {
+	background-color: inherit;
+	transform: rotateZ(-60deg);
+}

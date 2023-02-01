@@ -1,0 +1,33 @@
+
+.base {
+	position: relative;
+	width:fit-content;
+	height: fit-content;
+	z-index: 5;
+	pointer-events:all;
+}
+
+.inActive {
+	background-color: hsl(120, 0%, 60%);
+}
+
+.safe {
+	background-color: hsl(120, 50%, 60%);
+}
+
+.unsafe {
+	background-color: hsl(0, 50%, 60%);
+}
+
+.inActive:hover {
+	background-color: hsl(120, 0%, 50%);
+}
+
+.safe:hover {
+	background-color: hsl(120, 50%, 50%);
+}
+
+.unsafe:hover {
+	background-color: hsl(0, 50%, 50%);
+
+}

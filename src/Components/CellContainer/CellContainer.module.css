@@ -1,0 +1,38 @@
+.cellContainer {
+	border: 4px solid black;
+	padding: 0;
+	/* height: 100vh; */
+	/* width: 100vw; */
+}
+
+.evenRow {
+	margin: auto;
+	padding-left: 28px;
+	height: 97px;
+	position: relative;
+	
+	/* display: flex; */
+	/* flex-direction: row; */
+	/* justify-content: space-evenly; */
+	gap: 168px;
+	margin-bottom: 8px;
+	z-index: 0;
+	pointer-events: none;
+}
+
+.oddRow {
+	margin: auto;
+
+	padding-left: 28px;
+	left: 97px;
+	height: 97px;
+	position: relative;
+	margin-bottom: 8px;
+
+	/* justify-content:center; */
+	/* display: flex; */
+	/* flex-direction: row; */
+	gap: 168px;
+	z-index: 0;
+	pointer-events: none;
+}
