@@ -1,33 +1,33 @@
+/* Colors for cell background: inherited down to "Hexagon" */
 
-.base {
-	position: relative;
-	width:fit-content;
-	height: fit-content;
-	z-index: 5;
-	pointer-events:all;
+.inactive {
+	background-color: hsl(var(--inactiveCellHue), var(--inactiveCellSat), var(--cellLum));
 }
 
-.inActive {
-	background-color: hsl(120, 0%, 60%);
+.inactive:hover {
+	background-color: hsl(var(--inactiveCellHue), var(--inactiveCellSat), var(--cellHoverLum));
 }
 
 .safe {
-	background-color: hsl(120, 50%, 60%);
-}
-
-.unsafe {
-	background-color: hsl(0, 50%, 60%);
-}
-
-.inActive:hover {
-	background-color: hsl(120, 0%, 50%);
+	background-color: hsl(var(--safeCellHue), var(--safeCellSat), var(--cellLum));
 }
 
 .safe:hover {
-	background-color: hsl(120, 50%, 50%);
+	background-color: hsl(var(--safeCellHue), var(--safeCellSat), var(--cellHoverLum));
 }
 
-.unsafe:hover {
-	background-color: hsl(0, 50%, 50%);
+.bomb {
+	background-color: hsl(var(--bombCellHue), var(--bombCellSat), var(--cellLum));
+}
 
+.bomb:hover {
+	background-color: hsl(var(--bombCellHue), var(--bombCellSat), var(--cellHoverLum));
+}
+
+
+.text {
+	display: inline;
+	position: fixed;
+	z-index: 5;
+	
 }

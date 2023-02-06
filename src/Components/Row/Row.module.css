@@ -1,0 +1,9 @@
+.row {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	width: 100%;
+	justify-content: center;
+	gap: 145.5px;
+	height: 42px;
+}

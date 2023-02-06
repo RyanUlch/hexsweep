@@ -1,3 +1,6 @@
+/* Hexagon is not supposed to handle any logic, but does need to inherit background-color as colors change based on state from "Cell" */
+
+/* All 3 div's use .cell to create the same sized rectangle */
 .cell {
 	display: flex;
 	flex-direction: column;
@@ -5,13 +8,13 @@
 	justify-content: center;
 	align-items: center;
 	position: absolute;	
-	/* display: inline-block; */
 	padding: 0;
-	width: 56px;
-	height: 97px;
+	width: 48.5px;
+	height: 84px;
 	background-color: inherit;
 }
 
+/* Two of the div's are rotated 60, and -60 degrees to create a hexagon shape */
 .rot1 {
 	background-color: inherit;
 	transform: rotateZ(60deg);
