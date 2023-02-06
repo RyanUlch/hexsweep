@@ -4,6 +4,6 @@
 	flex-wrap: nowrap;
 	width: 100%;
 	justify-content: center;
-	gap: 145.5px;
+	gap: var(--rowGap);
 	height: 42px;
 }

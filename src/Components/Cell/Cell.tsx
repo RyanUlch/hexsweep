@@ -1,34 +1,3 @@
-// const Cell = (props: Props) => {
-
-// 	// State to determine the ClassName to use to set the background color of cells
-// 	const [clickedClassState, setClickedClassState] = useState(classes.inActive);
-
-// 	// Update the clickedClassState when props.cellInfo.clicked changes
-// 	useEffect(() => {
-// 		setClickedClassState(() => {
-// 			switch (props.cellInfo.clicked) {
-// 				case 0: return classes.inActive;
-// 				case 1: return classes.safe;
-// 				case 2: return classes.unsafe;
-// 				default: throw Error('Not a valid "clicked" property of cell Info');
-// 			}
-// 		})
-// 	}, [props.cellInfo.clicked]);
-
-// 	const handleClick = (event: React.SyntheticEvent) => {
-// 		event.preventDefault(); event.stopPropagation();
-// 		props.clickHandler(props.row, props.col);
-// 	}
-
-// 	return (
-// 		<div data-testid='cell' className={`${classes.base} ${clickedClassState}`} onClick={handleClick}>
-// 			<HexagonBack hints={props.cellInfo.hints} show={props.cellInfo.showHints} newHint={props.hintNum}/>
-// 		</div>
-// 	);
-// }
-
-// export default Cell;
-
 // CSS Import:
 import classes from './Cell.module.css';
 // Component Imports:
@@ -44,6 +13,7 @@ export interface Props {
 	row: number;
 	col: number;
 	onClick: (row: number, col: number) => void;
+	onFlag: (row: number, col: number) => void;
 }
 
 // Cell used to display current state of 1 game piece.
@@ -60,18 +30,31 @@ const Cell = (props: Props) => {
 		props.onClick(props.row, props.col);
 	};
 
-	const [hint, setHint] = useState("");
+	const handleFlag = (event: React.SyntheticEvent) => {
+		event.preventDefault();
+		event.stopPropagation();
+		props.onFlag(props.row, props.col);
+	}
+
+	const [hint, setHint] = useState(<></>);
 
 	useEffect(() => {
 		setHint(() => {
 			switch (props.cellInfo.hint) {
 				case 0: 
-					return `${props.cellInfo.hints[props.cellInfo.hint]} \u2921`;
+					return <p className={classes.text}>{`${props.cellInfo.hints[props.cellInfo.hint]} \u2921`}</p>;
 				case 1:
-					return `${props.cellInfo.hints[props.cellInfo.hint]} \u2B0D`;
+					return <p className={classes.text}>{`${props.cellInfo.hints[props.cellInfo.hint]} \u2B0D`}</p>;
 				case 2:
-					return `${props.cellInfo.hints[props.cellInfo.hint]} \u2922`;
-				default: return '';
+					return <p className={classes.text}>{`${props.cellInfo.hints[props.cellInfo.hint]} \u2922`}</p>;
+				case 3:
+					return (
+					<>
+						<p className={classes.text}>{`${props.cellInfo.hints[0]}\u2921`}</p>
+						<p className={classes.text}>{`${props.cellInfo.hints[1]}\u2B0D`}</p>
+						<p className={classes.text}>{`${props.cellInfo.hints[2]}\u2922`}</p>
+					</>)
+				default: return <></>;
 			}
 		})
 	}, [props.cellInfo.hint]);
@@ -81,12 +64,13 @@ const Cell = (props: Props) => {
 	return (
 		<div
 			onClick={handleClick}
-			// className={props.cellInfo.cellState === 0 ? classes.inactive : props.cellInfo.cellState === 1 ? classes.safe : classes.bomb}
-			className={props.cellInfo.isBomb ? classes.bomb : classes.safe}
+			onContextMenu={handleFlag}
+			className={`${classes.cell} ${props.cellInfo.cellState === 0 ? classes.inactive : props.cellInfo.cellState === 1 ? classes.safe : classes.bomb}`}
+			// className={props.cellInfo.isBomb ? classes.bomb : classes.safe}
 		>
-			<p className={classes.text}>
+			
 				{hint}
-			</p>
+			
 			<Hexagon />
 		</div>
 	);

@@ -1,4 +1,21 @@
 .gameContainer {
 	width: 80vw;
 	margin: auto;
+	border: var(--borderWidth) solid var(--borderColor);
+}
+
+.hintBtn {
+	background-color: var(--hintBtn);
+}
+
+.hintBtn:hover {
+	background-color: var(--hintBtnHover);
+}
+
+.hintBtnActive {
+	background-color: var(--hintBtnActive);
+}
+
+.hintBtnActive:hover {
+	background-color: var(--hintBtnActiveHover);
 }

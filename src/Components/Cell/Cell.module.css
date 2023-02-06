@@ -24,10 +24,17 @@
 	background-color: hsl(var(--bombCellHue), var(--bombCellSat), var(--cellHoverLum));
 }
 
+.cell {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	width: var(--cellWidth);
+	height: var(--cellHeight);
+}
+
 
 .text {
-	display: inline;
-	position: fixed;
 	z-index: 5;
-	
+	margin: 0;
 }

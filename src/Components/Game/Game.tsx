@@ -6,21 +6,35 @@ import Row from '../Row/Row';
 
 import ModalSelect from '../ModalSelect/ModalSelect';
 
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+
 // Variables during testing, will move to appropriate place
 const difficulty = 3; // Determine the amount of cells/bombs to produce, cannot be lower than 2
 const rowAmt = (difficulty - 1) * 4 + 1;
 const cellAmt = 3 * Math.pow(difficulty, 2) - 3 * difficulty + 1;
+const midCell = [Math.ceil(rowAmt/2)-1, Math.ceil((difficulty-1)/2) - ((difficulty%2 === 0) ? 1 : 0)];
+const freeHintNum = difficulty -2;
 
 // Generates the cellInfo for each cell with initial state within given row
-const infoArrGen = (cellAmt: number) => {
+const infoArrGen = (cellAmt: number, midline: boolean = false) => {
 	const cellInfoArr: cellInfo[] = [];
 	for (let j = 0; j < cellAmt; ++j) {
-		cellInfoArr.push({
-			isBomb: false,
-			hints: [0, 0, 0],
-			hint: -1,
-			cellState: 0,
-		});
+		if (midline && j === midCell[1]) {
+			cellInfoArr.push({
+				isBomb: false,
+				hints: [0, 0, 0],
+				hint: 3,
+				cellState: 1,
+			});
+		} else {
+			cellInfoArr.push({
+				isBomb: false,
+				hints: [0, 0, 0],
+				hint: -1,
+				cellState: 0,
+			});
+		}
 	}
 	return cellInfoArr;
 };
@@ -38,7 +52,7 @@ const bombGen = (arr: gameArray) => {
 	for (let i = 0; i < bombNum; ++i) {
 		let row = Math.floor(Math.random() * rowAmt);
 		let col = Math.floor(Math.random() * arr[row].rowArray.length);
-		if (!arr[row].rowArray[col].isBomb) {
+		if (!arr[row].rowArray[col].isBomb && row !== midCell[0] && row !== midCell[1]) {
 			arr[row].rowArray[col].isBomb = true;
 			bombArr.push([row, col]);
 		} else {
@@ -120,8 +134,6 @@ const updateHints = (arr: gameArray, bombArr: number[][]) => {
 const Game = () => {
 	const [gameArray, setGameArray] = useState<gameArray | undefined>();
 
-	
-
 	// Create Game and set gameArray
 	useEffect(() => {
 		setGameArray(() => {
@@ -156,7 +168,7 @@ const Game = () => {
 				else {
 					arr.push({
 						buffer: 0,
-						rowArray: [...infoArrGen(difficulty - ((i % 2 === 0) === (difficulty % 2 === 0) ? 1 : 0))],
+						rowArray: [...infoArrGen(difficulty - ((i % 2 === 0) === (difficulty % 2 === 0) ? 1 : 0), (i === midCell[0]))]
 					});
 				}
 			}
@@ -170,33 +182,126 @@ const Game = () => {
 
 	const [modal, setModal] = useState({show: false, cell: [-1, -1]});
 
+	// Check if the game is over, if every cell is marked as safe or flagged
+	const checkEndGame = () => {
+		if (gameArray) {
+			for (let i = 0; i < gameArray.length; ++i) {
+				for (let j = 0; j < gameArray[i].rowArray.length; ++j) {
+					if (gameArray[i].rowArray[j].cellState === 0) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+	}
 
+	// Check that the cells marked safe and flagged are accurate to what the cell containers
+	const verifyGame = () => {
+		if (gameArray) {
+			for (let i = 0; i < gameArray.length; ++i) {
+				for (let j = 0; j < gameArray[i].rowArray.length; ++j) {
+					const cell = gameArray[i].rowArray[j];
+					// Check if cell is a bomb, if so, make sure user flagged it. if it is safe, make sure user didn't flag it
+					if ((cell.isBomb && cell.cellState !== 2) || (!cell.isBomb && cell.cellState !== 1)) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+	}
+
+	// Handle when the game has ended, can lose early by clicking on a cell with a bomb
+	const endGame = (hasLost: boolean = false) => {
+		if (!hasLost && verifyGame()) {
+			alert('You win!');
+		} else {
+			alert('you lose!');
+		}
+	}
+
+	// User wants a "free hint" Mark cell appropriately, and set the cell to give all hints.
+	const giveHint = (row: number, col: number) => {
+		if (gameArray) {
+			gameArray[row].rowArray[col].cellState = gameArray[row].rowArray[col].isBomb ? 2 : 1;
+			gameArray[row].rowArray[col].hint = 3;
+			setFreeHint(prev => {
+				return {next: false, left: prev.left-1}
+			})
+		}
+	}
+
+	// Handle when a user "left" clicks a cell. If it is a bomb, the user has lost early, if not show modal to let user select a hint
 	const handleCellClick = (row: number, col: number) => {
-		setModal({show: true, cell: [row, col]});
+		if (gameArray) {
+			if (freeHint.next) {
+				giveHint(row, col);
+			} else if (gameArray[row].rowArray[col].isBomb) {
+				endGame(true);
+			} else if (gameArray[row].rowArray[col].hint === -1) {
+				setModal({show: true, cell: [row, col]});
+			}
+		}
 	};
 
+	// Upon closing modal, update state to show the correct hit the user selected. Also update the cellState to be "safe"
 	const closeModal = (hintRequest: number) => {
 		setGameArray(prev => {
 			if (prev) {
 				const newArray = [...prev];
 				newArray[modal.cell[0]].rowArray[modal.cell[1]].hint = hintRequest;
+				newArray[modal.cell[0]].rowArray[modal.cell[1]].cellState = 1;
 				return newArray;
 			} else {
 				return prev;
 			}
 		})
 		setModal({show: false, cell: [-1, -1]});
+		// Check if the user has selected all cells.
+		if (checkEndGame()) {
+			endGame();
+		}
 	};
+
+	// Mark cell as flagged, or return it to unmarked if already flagged
+	const createFlag = (row: number, col: number) => {
+		setGameArray(prev => {
+			if (prev) {
+				const newArray = [...prev];
+				const currentState = newArray[row].rowArray[col].cellState;
+				if (currentState === 2) {
+					newArray[row].rowArray[col].cellState = 0;
+				} else if (currentState === 0) {
+					newArray[row].rowArray[col].cellState = 2;
+				}
+				return newArray;
+			} else {
+				return prev;
+			}
+		});
+		if (checkEndGame()) {
+			endGame();
+		}
+	}
+
+	const [freeHint, setFreeHint] = useState({next: false, left: freeHintNum});
+	const freeHintHandler = () => {
+		setFreeHint(prev => {
+			return {next: !prev.next, left: prev.left};
+		});
+	}
 
 	console.log(gameArray);
 	return (
 		<>
 			<ModalSelect show={modal.show} handleClose={closeModal}/>
-			<div className={classes.gameContainer}>
+			<Container className='m-3'>
 				{gameArray?.map((row, index) => {
-					return <Row key={`R${index}`} rowNum={index} rowArray={row.rowArray} buffer={row.buffer} onClick={handleCellClick} />;
+					return <Row key={`R${index}`} rowNum={index} rowArray={row.rowArray} buffer={row.buffer} onClick={handleCellClick} onFlag={createFlag}/>;
 				})}
-			</div>
+				<Button className={freeHint.next ? classes.hintBtnActive : classes.hintBtn} disabled={freeHint.left === 0} onClick={freeHintHandler}>{`Free Hint (${freeHint.left}) left`}</Button>
+			</Container>
 		</>
 	);
 };

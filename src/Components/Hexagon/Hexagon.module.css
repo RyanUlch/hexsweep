@@ -9,8 +9,8 @@
 	align-items: center;
 	position: absolute;	
 	padding: 0;
-	width: 48.5px;
-	height: 84px;
+	width: var(--cellWidth);
+	height: var(--cellHeight);
 	background-color: inherit;
 }
 

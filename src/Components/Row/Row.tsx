@@ -8,6 +8,7 @@ export interface Props {
 	rowArray: cellInfo[];
 	buffer: number;
 	onClick: (row: number, col: number) => void;
+	onFlag: (row: number, col: number) => void;
 }
 
 // Row handles displaying "Cells" and the space needed before starting cell
@@ -21,7 +22,7 @@ const Row = (props: Props) => {
 		<div className={classes.row}>
 			{props.rowArray.map((cell, index) => {
 				return (
-					<Cell key={`r${props.rowNum}c${index}`} onClick={props.onClick} row={props.rowNum} col={index} cellInfo={props.rowArray[index]} />
+					<Cell key={`r${props.rowNum}c${index}`} onClick={props.onClick} row={props.rowNum} col={index} cellInfo={props.rowArray[index]} onFlag={props.onFlag}/>
 				);
 			})}
 		</div>

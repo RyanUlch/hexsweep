@@ -1,0 +1,41 @@
+// @import '../public/custom.scss';
+@import "node_modules/bootstrap/scss/bootstrap";
+:root {
+	/* Colors: */
+	--inactiveCellHue: 120;
+	--inactiveCellSat: 0%;
+
+	--safeCellHue: 120;
+	--safeCellSat: 50%;
+
+	--bombCellHue: 0;
+	--bombCellSat: 50%;
+
+	--cellLum: 60%;
+	--cellHoverLum: 50%;
+
+	--borderColor: black;
+	--borderWidth: 2px;
+
+	--hintBtn: hsl(208, 100%, 35%);
+	--hintBtnHover: hsl(208, 100%, 25%);
+	--hintBtnActive: hsl(91, 100%, 35%);
+	--hintBtnActiveHover: hsl(91, 100%, 25%);
+
+	/* Size Defaults */
+	--fontSize: clamp(1rem, 2vw, 2rem);
+
+	--cellWidth: 48.5px;
+	--cellHeight: 84px;
+
+	--rowGap: 97px;
+}
+
+
+*, html, body {
+	margin: 0;
+}
+
+p {
+	font-size: var();
+}
