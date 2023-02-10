@@ -32,15 +32,8 @@ const Game = () => {
 		modalHint: false,
 		hintCell: [-1, -1],
 		modalGame: false,
-		tick: 0,
+
 	});
-
-	const [userTick, setUserTick] = useState(0);
-
-	useEffect(()=> {
-		setUserTick(prev => prev+1);
-	}, [game.tick, game.gameArray, game.gameInfo.freeHintNum, game.gameInfo.freeHintNext, game.gameInfo.freeHintsLeft, game.gameInfo.bombNum, game.gameInfo.bombsFlagged, game.gameInfo.gameNumber, game.gameInfo.isFinished, game.hintCell, game.modalGame, game.modalHint]);
-	// }, [[...game.gameArray], {...game.gameInfo}, game.modalGame, game.modalHint]);
 
 /* Update Game Function Section - Passed functions to components to update GameArray/GameInfo */
 
@@ -48,6 +41,16 @@ const Game = () => {
 	const handleCellClick = (row: number, col: number) => {
 		if (game.gameInfo.freeHintNext) {
 			giveFreeHint(row, col);
+			setGame(prev => {
+				return {
+					...prev, 
+					gameInfo: {
+						...prev.gameInfo,
+						freeHintNext: false,
+						freeHintsLeft: prev.gameInfo.freeHintsLeft-1,
+					}
+				}
+			})
 			checkIfEndGame();
 		} else if (game.gameArray && game.gameArray[row].rowArray[col].isBomb) {
 			endGame(true);
@@ -55,7 +58,7 @@ const Game = () => {
 			if (!checkIfEndGame()) {
 				setGame(prev => {
 					return {
-						...prev, modalHint: true, hintCell: [row, col], tick: prev.tick+1,
+						...prev, modalHint: true, hintCell: [row, col],
 					}
 				})
 			}
@@ -75,7 +78,7 @@ const Game = () => {
 				newArray[row].rowArray[col].cellState = 2;
 				newInfo.bombsFlagged = newInfo.bombsFlagged + 1;
 			}
-			return  {...prev, gameArray: newArray, tick: prev.tick+1};
+			return  {...prev, gameArray: newArray};
 		});
 		checkIfEndGame();
 	}
@@ -89,14 +92,15 @@ const Game = () => {
 			newArr[row].rowArray[col].hint = 3;
 			newInfo.freeHintNext = false;
 			newInfo.freeHintsLeft = newInfo.freeHintsLeft -1;
-			return {...prev, gameArray: newArr, tick: prev.tick+1};
+			return {...prev, gameArray: newArr};
 		});
 	}
 
 	// Toggle free hint button, if set, next cell clicked will give a free hint, cancelled by hitting button again
 	const freeHintHandler = () => {
+		console.log(game.gameInfo.freeHintNext);
 		setGame(prev => {
-			return {...prev, gameInfo: {...prev.gameInfo, freeHintNext: !prev.gameInfo.freeHintNext}, tick: prev.tick+1};
+			return {...prev, gameInfo: {...prev.gameInfo, freeHintNext: !prev.gameInfo.freeHintNext}};
 		});
 	}
 
@@ -107,7 +111,6 @@ const Game = () => {
 			return {
 				...prev,
 				modalGame: true,
-				tick: prev.tick+1,
 			}
 		});
 	}
@@ -130,7 +133,6 @@ const Game = () => {
 				gameArray: newArray,
 				modalHint: false,
 				hintCell: [-1, -1],
-				tick: prev.tick+1,
 			};
 
 		})
@@ -183,7 +185,6 @@ const Game = () => {
 					...prev.gameInfo,
 					isFinished: true,
 				},
-				tick: prev.tick+1,
 			}
 		})
 	}
@@ -247,7 +248,6 @@ const Game = () => {
 				modalGame: false,
 				gameInfo: gameInfo,
 				gameArray: arr,
-				tick: prev.tick+1,
 			};
 		});
 	}
