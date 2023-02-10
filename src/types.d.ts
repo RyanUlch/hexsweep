@@ -7,7 +7,7 @@ type buffer = number;
 // Hints are stored based on direction (0: NW/SE, 1: N/S, 2: NE/SW)
 type cellInfo = {
 	isBomb: boolean;
-	hints: [number, number, number];
+	hints: number[];
 	hint: number;
 	cellState: number;
 }

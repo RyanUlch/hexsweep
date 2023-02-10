@@ -5,5 +5,5 @@
 	width: 100%;
 	justify-content: center;
 	gap: var(--rowGap);
-	height: 42px;
+	height: var(--rowHeight);
 }

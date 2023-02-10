@@ -2,216 +2,166 @@
 import { useState, useEffect } from 'react';
 // CSS import:
 import classes from './Game.module.css'
+// Bootstrap Imports:
+import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
+// Component Imports:
+import ModalNewGame from '../Modals/ModalNewGame';
+import ModalSelect from '../Modals/ModalSelect';
 import Row from '../Row/Row';
 
-import ModalSelect from '../ModalSelect/ModalSelect';
-
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-
-// Variables during testing, will move to appropriate place
-const difficulty = 3; // Determine the amount of cells/bombs to produce, cannot be lower than 2
-const rowAmt = (difficulty - 1) * 4 + 1;
-const cellAmt = 3 * Math.pow(difficulty, 2) - 3 * difficulty + 1;
-const midCell = [Math.ceil(rowAmt/2)-1, Math.ceil((difficulty-1)/2) - ((difficulty%2 === 0) ? 1 : 0)];
-const freeHintNum = difficulty -2;
-
-// Generates the cellInfo for each cell with initial state within given row
-const infoArrGen = (cellAmt: number, midline: boolean = false) => {
-	const cellInfoArr: cellInfo[] = [];
-	for (let j = 0; j < cellAmt; ++j) {
-		if (midline && j === midCell[1]) {
-			cellInfoArr.push({
-				isBomb: false,
-				hints: [0, 0, 0],
-				hint: 3,
-				cellState: 1,
-			});
-		} else {
-			cellInfoArr.push({
-				isBomb: false,
-				hints: [0, 0, 0],
-				hint: -1,
-				cellState: 0,
-			});
-		}
-	}
-	return cellInfoArr;
-};
-
-// Generates the number of buffer cells needed. Only used on Pre and Post full rows (full rows have no buffer)
-const bufferGen = (isPre: boolean, row: number) => {
-	// Math slightly different if this row is before the full rows or not, using ternary
-	return Math.floor((difficulty - (isPre ? row + 1 : rowAmt - row)) / 2);
-};
-
-// Generates the locations of the bomb-cells mutates passed array, and returns array of the bombs locations
-const bombGen = (arr: gameArray) => {
-	const bombArr: number[][] = [];
-	const bombNum: number = Math.floor(cellAmt / 4 + Math.random() * difficulty);
-	for (let i = 0; i < bombNum; ++i) {
-		let row = Math.floor(Math.random() * rowAmt);
-		let col = Math.floor(Math.random() * arr[row].rowArray.length);
-		if (!arr[row].rowArray[col].isBomb && row !== midCell[0] && row !== midCell[1]) {
-			arr[row].rowArray[col].isBomb = true;
-			bombArr.push([row, col]);
-		} else {
-			--i;
-		}
-	}
-	return bombArr;
-};
-
-// Create hints based on surrounding cells
-const updateHints = (arr: gameArray, bombArr: number[][]) => {
-	// Needs to check 6 times:
-	/* Even */ /* Odd */
-	// NW: 	[-1, -1], 	[-1, +0],
-	// N : 	[-2, +0],	[-2, +0],
-	// NE: 	[-1, +0],	[-1, +1],
-	// SE: 	[+1, +0],	[+1, +1],
-	// S : 	[+2, +0],	[+2, +0],
-	// SW: 	[+1, -1],	[+1, +0],
-	for (let i = 0; i < bombArr.length; ++i) {
-		const bBuf = arr[bombArr[i][0]].buffer; // Amount of buffer space to account for
-		const bRow = bombArr[i][0]; // Current Bomb Row
-		const bCol = bombArr[i][1] + bBuf; // Current Bomb Column, adjusted to buffer position
-
-		// Add 1 to counter to each adjoining cell. Will need to check that there is a valid row/column for each direction.
-		// When checking a row/column before current cell, check that new value is 0 or above
-		// When checking a row/column after  current cell, check that new value is smaller than the row/column length
-		// Row being even/odd only matters for East/West directions
-		const isOdd = (difficulty % 2 === 0 
-						? (bRow % 2 === 0) ? false : true
-						: (bRow % 2 === 0) ? true : false);
-
-		console.log(`
-			Location: 	[${bRow}, ${bCol}],
-			NW:			[${bRow - 1}, ${bCol - (isOdd ? 1 : 0)}],
-			N :			[${bRow - 2}, ${bCol}],
-			NE:			[${bRow - 1}, ${bCol + (isOdd ? 0 : 1)}],
-			SE:			[${bRow + 1}, ${bCol + (isOdd ? 0 : 1)}],
-			S :			[${bRow + 2}, ${bCol}],
-			SW:			[${bRow + 1}, ${bCol - (isOdd ? 1 : 0)}],
-		`);
-		// Logic for finding column number in array with buffer considered
-		const bColExp = [
-			bCol - arr[bRow - 1]?.buffer - (isOdd ? 1 : 0),
-			bCol - arr[bRow - 2]?.buffer,
-			bCol - arr[bRow - 1]?.buffer + (isOdd ? 0 : 1),
-			bCol - arr[bRow + 1]?.buffer + (isOdd ? 0 : 1),
-			bCol - arr[bRow + 2]?.buffer,
-			bCol - arr[bRow + 1]?.buffer - (isOdd ? 1 : 0),
-		];
-		//  lengths of all possible rows, can be undefined if doesn't exist, won't interfere with below check
-		const bRowExp = [
-			arr[bRow - 1]?.rowArray.length, // North-East/West
-			arr[bRow - 2]?.rowArray.length, // North
-			arr[bRow + 1]?.rowArray.length, // South-East/West
-			arr[bRow + 2]?.rowArray.length, // South
-		];
-
-		// Check Row Exists			// Check Column Exists in specific row
-
-		// North-West:
-		if ((bRow - 1 > -1) 		&& (bColExp[0] < bRowExp[0]) && (bColExp[0] > -1)) ++arr[bRow - 1].rowArray[bColExp[0]].hints[0];
-		// North:
-		if ((bRow - 2 > -1) 		&& (bColExp[1] < bRowExp[1]) && (bColExp[1] > -1)) ++arr[bRow - 2].rowArray[bColExp[1]].hints[1];
-		// North-East:
-		if ((bRow - 1 > -1) 		&& (bColExp[2] < bRowExp[0]) && (bColExp[2] > -1)) ++arr[bRow - 1].rowArray[bColExp[2]].hints[2];
-		// South-East:
-		if ((bRow + 1 < arr.length) && (bColExp[3] < bRowExp[2]) && (bColExp[3] > -1)) ++arr[bRow + 1].rowArray[bColExp[3]].hints[0];
-		// South:
-		if ((bRow + 2 < arr.length) && (bColExp[4] < bRowExp[3]) && (bColExp[4] > -1)) ++arr[bRow + 2].rowArray[bColExp[4]].hints[1];
-		// South-West
-		if ((bRow + 1 < arr.length) && (bColExp[5] < bRowExp[2]) && (bColExp[5] > -1)) ++arr[bRow + 1].rowArray[bColExp[5]].hints[2];
-	}
-	return;
-};
+import { infoArrGen, bufferGen, updateHints, bombGen} from '../../helpers/setupGameHelpers';
 
 // Game handles state and logic of game-play.
 // State is not complex, and only needs to be passed through 2 children: therefore not using Redux/Context
 const Game = () => {
-	const [gameArray, setGameArray] = useState<gameArray | undefined>();
+	// State Initialization:
+	const [game, setGame] = useState({
+		// Game Array contains all info about the rows/cells and the info regarding those
+		gameArray: [{buffer: -1, rowArray: [{isBomb: false,	hints: [-1, -1, -1], hint: -1, cellState: -1}]}],
+		// Game Info contains all the info regarding the overall settings for the game (difficulty, gameNumber, etc.)
+		gameInfo: {
+			// Info regarding the amount of hints the user has to use, and if they have activated the free hint button
+			// FreeHintNum set by ({difficulty} - 2) 
+			freeHintNum: -1, 	freeHintNext: false, 	freeHintsLeft: -1,
+			// Info regarding current games bombs
+			bombNum: -1,		bombsFlagged: -1,
+			// Info regarding larger game stats
+			gameNumber:	 0,		isFinished: true,
+		},
+		modalHint: false,
+		hintCell: [-1, -1],
+		modalGame: false,
+		tick: 0,
+	});
 
-	// Create Game and set gameArray
-	useEffect(() => {
-		setGameArray(() => {
-			const arr: gameArray = [];
-			// Create the all the rows in gameArray
-			for (let i = 0; i < rowAmt; ++i) {
-				// Row should contain less than the maximum cells
-				if (i < difficulty) {
-					arr.push({
-						buffer: bufferGen(true, i),
-						rowArray: [...infoArrGen(i + 1)],
-					});
-				}
-				// Check if the current row is passed the full rows section
-				// Simply, these are the last rows of the pattern, and will need buffers just like the beginning rows
-				else if (i >= rowAmt - difficulty) {
-					arr.push({
-						buffer: bufferGen(false, i),
-						rowArray: [...infoArrGen(rowAmt - i)],
-					});
-				}
-				// Else - these rows are full row sections
-				// Check within {infoArrGen} parameter if working in an "Even" row, and also an "Even" difficulty
-				// This is a bit harder to explain:
-				/*  when difficulty is even, the longest row will also be even, 
-					Same with difficulty being odd, the longest row will be Odd.
-					So, check the modulus to see if i and difficulty are even.
-					If they are both even, or both odd, then this row is the longest it can be (difficulty)
-					If not, then the length of the row is difficulty-1
-					max row length = difficulty
-				*/
-				else {
-					arr.push({
-						buffer: 0,
-						rowArray: [...infoArrGen(difficulty - ((i % 2 === 0) === (difficulty % 2 === 0) ? 1 : 0), (i === midCell[0]))]
-					});
-				}
+	const [userTick, setUserTick] = useState(0);
+
+	useEffect(()=> {
+		setUserTick(prev => prev+1);
+	}, [game.tick, game.gameArray, game.gameInfo.freeHintNum, game.gameInfo.freeHintNext, game.gameInfo.freeHintsLeft, game.gameInfo.bombNum, game.gameInfo.bombsFlagged, game.gameInfo.gameNumber, game.gameInfo.isFinished, game.hintCell, game.modalGame, game.modalHint]);
+	// }, [[...game.gameArray], {...game.gameInfo}, game.modalGame, game.modalHint]);
+
+/* Update Game Function Section - Passed functions to components to update GameArray/GameInfo */
+
+	// Handle when a user "left" clicks a cell. If it is a bomb, the user has lost early, if not show modal to let user select a hint
+	const handleCellClick = (row: number, col: number) => {
+		if (game.gameInfo.freeHintNext) {
+			giveFreeHint(row, col);
+			checkIfEndGame();
+		} else if (game.gameArray && game.gameArray[row].rowArray[col].isBomb) {
+			endGame(true);
+		} else if (game.gameArray && game.gameArray[row].rowArray[col].hint === -1) {
+			if (!checkIfEndGame()) {
+				setGame(prev => {
+					return {
+						...prev, modalHint: true, hintCell: [row, col], tick: prev.tick+1,
+					}
+				})
 			}
-			// Generate bomb array, update gameArray, and return bombArray to update hints
-			const bombArr = bombGen(arr);
-			// Update hints, mutating the array
-			updateHints(arr, bombArr);
-			return [...arr];
+		}
+	}
+
+	// Handle whe a user "right" clicks a cell. Mark cell as flagged, or return it to unmarked if already flagged
+	const createFlag = (row: number, col: number) => {
+		setGame(prev => {
+			const newArray = [...prev.gameArray];
+			const newInfo = {...prev.gameInfo};
+			const currentState = newArray[row].rowArray[col].cellState;
+			if (currentState === 2) {
+				newArray[row].rowArray[col].cellState = 0;
+				newInfo.bombsFlagged = newInfo.bombsFlagged - 1;
+			} else if (currentState === 0) {
+				newArray[row].rowArray[col].cellState = 2;
+				newInfo.bombsFlagged = newInfo.bombsFlagged + 1;
+			}
+			return  {...prev, gameArray: newArray, tick: prev.tick+1};
 		});
-	}, []);
+		checkIfEndGame();
+	}
 
-	const [modal, setModal] = useState({show: false, cell: [-1, -1]});
+	// User wants a "free hint" Mark cell appropriately, and set the cell to give all hints.
+	const giveFreeHint = (row: number, col: number) => {
+		setGame(prev => {
+			const newArr = [...prev.gameArray];
+			const newInfo = {...prev.gameInfo};
+			newArr[row].rowArray[col].cellState = newArr[row].rowArray[col].isBomb ? 2 : 1;
+			newArr[row].rowArray[col].hint = 3;
+			newInfo.freeHintNext = false;
+			newInfo.freeHintsLeft = newInfo.freeHintsLeft -1;
+			return {...prev, gameArray: newArr, tick: prev.tick+1};
+		});
+	}
 
-	// Check if the game is over, if every cell is marked as safe or flagged
-	const checkEndGame = () => {
-		if (gameArray) {
-			for (let i = 0; i < gameArray.length; ++i) {
-				for (let j = 0; j < gameArray[i].rowArray.length; ++j) {
-					if (gameArray[i].rowArray[j].cellState === 0) {
+	// Toggle free hint button, if set, next cell clicked will give a free hint, cancelled by hitting button again
+	const freeHintHandler = () => {
+		setGame(prev => {
+			return {...prev, gameInfo: {...prev.gameInfo, freeHintNext: !prev.gameInfo.freeHintNext}, tick: prev.tick+1};
+		});
+	}
+
+/* Modal Handling Functions */
+	// Upon clicking new game button, show modal to let user select difficulty
+	const restartGame = () => {
+		setGame(prev => {
+			return {
+				...prev,
+				modalGame: true,
+				tick: prev.tick+1,
+			}
+		});
+	}
+
+	// Upon closing modal for a new game, update the game info with the difficulty, and game number
+	const closeModalGame = (difficulty: number) => {
+		createGame(difficulty);
+	}
+	// Note: handling the showing of the Hint Modal is based in {Cell} since it needs the specific cell info to update correctly
+	// Upon closing modal for cell hint, update state to show the correct hint the user selected. Also update the cellState to be "safe"
+	const closeModalHint = (hintRequest: number) => {
+		setGame(prev => {
+
+			const newArray = [...prev.gameArray];
+			newArray[prev.hintCell[0]].rowArray[prev.hintCell[1]].hint = hintRequest;
+			newArray[prev.hintCell[0]].rowArray[prev.hintCell[1]].cellState = 1;
+
+			return {
+				...prev,
+				gameArray: newArray,
+				modalHint: false,
+				hintCell: [-1, -1],
+				tick: prev.tick+1,
+			};
+
+		})
+	};
+// console.log(gameDifficulty)
+/* End Game Functions - called to check if the game is done, and if the user has won */
+	// Check if the game is over, if every cell is marked as safe or flagged, called after cells are marked
+	// If game is over, automatically go to handling the endGame
+	const checkIfEndGame = () => {
+			for (let i = 0; i < game.gameArray.length; ++i) {
+				for (let j = 0; j < game.gameArray[i].rowArray.length; ++j) {
+					if (game.gameArray[i].rowArray[j].cellState === 0) {
 						return false;
 					}
 				}
 			}
-			return true;
-		}
+			endGame();
 	}
-
 	// Check that the cells marked safe and flagged are accurate to what the cell containers
 	const verifyGame = () => {
-		if (gameArray) {
-			for (let i = 0; i < gameArray.length; ++i) {
-				for (let j = 0; j < gameArray[i].rowArray.length; ++j) {
-					const cell = gameArray[i].rowArray[j];
-					// Check if cell is a bomb, if so, make sure user flagged it. if it is safe, make sure user didn't flag it
-					if ((cell.isBomb && cell.cellState !== 2) || (!cell.isBomb && cell.cellState !== 1)) {
-						return false;
-					}
+		for (let i = 0; i < game.gameArray.length; ++i) {
+			for (let j = 0; j < game.gameArray[i].rowArray.length; ++j) {
+				const cell = game.gameArray[i].rowArray[j];
+				// Check if cell is a bomb, if so, make sure user flagged it. if it is safe, make sure user didn't flag it
+				if ((cell.isBomb && cell.cellState !== 2) || (!cell.isBomb && cell.cellState !== 1)) {
+					return false;
 				}
 			}
-			return true;
 		}
+		return true;
 	}
-
 	// Handle when the game has ended, can lose early by clicking on a cell with a bomb
 	const endGame = (hasLost: boolean = false) => {
 		if (!hasLost && verifyGame()) {
@@ -219,89 +169,109 @@ const Game = () => {
 		} else {
 			alert('you lose!');
 		}
-	}
-
-	// User wants a "free hint" Mark cell appropriately, and set the cell to give all hints.
-	const giveHint = (row: number, col: number) => {
-		if (gameArray) {
-			gameArray[row].rowArray[col].cellState = gameArray[row].rowArray[col].isBomb ? 2 : 1;
-			gameArray[row].rowArray[col].hint = 3;
-			setFreeHint(prev => {
-				return {next: false, left: prev.left-1}
-			})
-		}
-	}
-
-	// Handle when a user "left" clicks a cell. If it is a bomb, the user has lost early, if not show modal to let user select a hint
-	const handleCellClick = (row: number, col: number) => {
-		if (gameArray) {
-			if (freeHint.next) {
-				giveHint(row, col);
-			} else if (gameArray[row].rowArray[col].isBomb) {
-				endGame(true);
-			} else if (gameArray[row].rowArray[col].hint === -1) {
-				setModal({show: true, cell: [row, col]});
+		setGame(prev => {
+			const newArr = [...prev.gameArray];
+			for (let i = 0; i < newArr.length; ++i) {
+				for (let j = 0; j < newArr[i].rowArray.length; ++j) {
+					newArr[i].rowArray[j].cellState = newArr[i].rowArray[j].isBomb ? 2 : 1;
+				}
 			}
-		}
-	};
-
-	// Upon closing modal, update state to show the correct hit the user selected. Also update the cellState to be "safe"
-	const closeModal = (hintRequest: number) => {
-		setGameArray(prev => {
-			if (prev) {
-				const newArray = [...prev];
-				newArray[modal.cell[0]].rowArray[modal.cell[1]].hint = hintRequest;
-				newArray[modal.cell[0]].rowArray[modal.cell[1]].cellState = 1;
-				return newArray;
-			} else {
-				return prev;
+			return {
+				...prev,
+				gameArray: newArr,
+				gameInfo: {
+					...prev.gameInfo,
+					isFinished: true,
+				},
+				tick: prev.tick+1,
 			}
 		})
-		setModal({show: false, cell: [-1, -1]});
-		// Check if the user has selected all cells.
-		if (checkEndGame()) {
-			endGame();
-		}
-	};
+	}
 
-	// Mark cell as flagged, or return it to unmarked if already flagged
-	const createFlag = (row: number, col: number) => {
-		setGameArray(prev => {
-			if (prev) {
-				const newArray = [...prev];
-				const currentState = newArray[row].rowArray[col].cellState;
-				if (currentState === 2) {
-					newArray[row].rowArray[col].cellState = 0;
-				} else if (currentState === 0) {
-					newArray[row].rowArray[col].cellState = 2;
-				}
-				return newArray;
-			} else {
-				return prev;
+/* UseEffect Section - used for creating new games, and setting new difficulties */
+	// Create Game and set gameArray
+	const createGame = (difficulty: number) => {
+		let rowAmt = ((difficulty - 1) * 4) + 1;
+		let midCell = [Math.ceil(rowAmt/2)-1, Math.ceil((difficulty-1)/2) - ((difficulty%2 === 0) ? 1 : 0)];
+		let cellAmt = 3 * Math.pow(difficulty, 2) - 3 * difficulty + 1;
+		// When user creates a new game with a different difficulty, change the values of {gameInfo}
+
+		setGame(prev => {
+			const gameInfo = {
+				freeHintNum: difficulty - 2,
+				freeHintNext: false,
+				freeHintsLeft: difficulty -2,
+				bombNum: Math.floor(cellAmt / 4 + Math.random() * difficulty),
+				bombsFlagged: 0,
+				gameNumber: prev.gameInfo.gameNumber+1,
+				isFinished: false,
 			}
+			const arr: gameArray = [];
+			// Create the all the rows in gameArray
+			for (let i = 0; i < rowAmt; ++i) {
+				// Row should contain less than the maximum cells
+				if (i < difficulty) {
+					arr.push({
+						buffer: bufferGen(true, i, rowAmt, difficulty),
+						rowArray: [...infoArrGen(i+1, midCell[1], difficulty)],
+					});
+				}
+				// Check if the current row is passed the full rows section
+				// Simply, these are the last rows of the pattern, and will need buffers just like the beginning rows
+				else if (i >= rowAmt - difficulty) {
+					arr.push({
+						buffer: bufferGen(false, i, rowAmt, difficulty),
+						rowArray: [...infoArrGen(rowAmt-i, midCell[1], difficulty)],
+					});
+				}
+				// Else - these rows are full row sections
+				// Check within {infoArrGen} parameter if working in an "Even" row, and also an "Even" difficulty
+				// This is a bit harder to explain:
+				/*  when difficulty is even, the longest row will also be even, same with difficulty being odd, the longest row will be Odd.
+					So, check the modulus to see if i and difficulty are even. If they are both even, or both odd, then this row is the longest it can be (difficulty)
+					If not, then the length of the row is difficulty-1. Max Row Length = difficulty
+				*/
+				else {
+					arr.push({
+						buffer: 0,
+						rowArray: [...infoArrGen(difficulty - ((i % 2 === 0) === (difficulty % 2 === 0) ? 1 : 0), midCell[1], difficulty, (i === midCell[0]))],
+					});
+				}
+			}
+			// Generate bomb array, update gameArray, and return bombArray to update hints
+			const bombArr = bombGen(arr, rowAmt, cellAmt, midCell, difficulty);
+			// Update hints, mutating the array
+			updateHints(arr, bombArr, difficulty);
+			return {
+				...prev,
+				modalGame: false,
+				gameInfo: gameInfo,
+				gameArray: arr,
+				tick: prev.tick+1,
+			};
 		});
-		if (checkEndGame()) {
-			endGame();
-		}
 	}
 
-	const [freeHint, setFreeHint] = useState({next: false, left: freeHintNum});
-	const freeHintHandler = () => {
-		setFreeHint(prev => {
-			return {next: !prev.next, left: prev.left};
-		});
-	}
-
-	console.log(gameArray);
 	return (
 		<>
-			<ModalSelect show={modal.show} handleClose={closeModal}/>
-			<Container className='m-3'>
-				{gameArray?.map((row, index) => {
-					return <Row key={`R${index}`} rowNum={index} rowArray={row.rowArray} buffer={row.buffer} onClick={handleCellClick} onFlag={createFlag}/>;
-				})}
-				<Button className={freeHint.next ? classes.hintBtnActive : classes.hintBtn} disabled={freeHint.left === 0} onClick={freeHintHandler}>{`Free Hint (${freeHint.left}) left`}</Button>
-			</Container>
+			<ModalSelect show={game.modalHint} handleClose={closeModalHint} />
+			<ModalNewGame show={game.modalGame} handleClose={closeModalGame} />
+			<Card className={`border border-success rounded ${classes.gameCard}`}>
+				<Card.Header>
+					<h1>Hex-Sweep</h1>
+				</Card.Header>
+				<Card.Body className={classes.gameArea}>
+					{/* <Row key={`R${0}`} rowNum={0} rowArray={[{isBomb: false, hints: [0, 0, 0], hint: 1, cellState: 0 }]} buffer={0} onClick={handleCellClick} onFlag={createFlag}/> */}
+					{game.gameArray.map((row, index) => {
+						return <Row key={`R${index}`} rowNum={index} rowArray={row.rowArray} buffer={row.buffer} onClick={handleCellClick} onFlag={createFlag}/>;
+					})}
+				</Card.Body>
+				<Card.Footer>
+					<Button className={game.gameInfo.freeHintNext ? classes.hintBtnActive : classes.hintBtn} disabled={game.gameInfo.freeHintsLeft === 0} onClick={freeHintHandler}>{`Free Hint (${game.gameInfo.freeHintsLeft}/${game.gameInfo.freeHintNum}) left`}</Button>
+					<Button className={classes.restartBtn} onClick={restartGame}>{`New Game`}</Button>
+					<Button>{game.gameInfo.bombsFlagged}/{game.gameInfo.bombNum} Bombs</Button>
+				</Card.Footer>
+			</Card>
 		</>
 	);
 };

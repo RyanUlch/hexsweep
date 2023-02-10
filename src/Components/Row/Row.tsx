@@ -14,9 +14,9 @@ export interface Props {
 // Row handles displaying "Cells" and the space needed before starting cell
 // Row should only determine placement of cells, all game logic handled above (requires passing props from parent to each cell)
 const Row = (props: Props) => {
-	useEffect(() => {
+	// useEffect(() => {
 
-	}, [{...props}]);
+	// }, [{...props}]);
 
 	return (
 		<div className={classes.row}>

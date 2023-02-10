@@ -23,12 +23,17 @@
 	--hintBtnActiveHover: hsl(91, 100%, 25%);
 
 	/* Size Defaults */
-	--fontSize: clamp(1rem, 2vw, 2rem);
+	--fontSize: clamp(1rem, 1vw, 2rem);
 
-	--cellWidth: 48.5px;
-	--cellHeight: 84px;
+	--cellHeight: clamp(2rem, 7vw, 6rem);
+	--cellWidth: calc(var(--cellHeight)  / 1.731);
 
-	--rowGap: 97px;
+	--extraGap: calc(var(--cellHeight) / 10);
+	--rowGap: calc((var(--cellHeight) * 1.3) + var(--extraGap));
+	--rowHeight: calc((var(--cellHeight) / 2) + (var(--extraGap) / 2));
+
+	--gameMargin: 1rem auto calc(1rem + (var(--cellHeight) / 2)) auto;
+	--gamePadding: 0 2rem;
 }
 
 
@@ -37,5 +42,5 @@
 }
 
 p {
-	font-size: var();
+	font-size: var(--fontSize);
 }

@@ -3,7 +3,6 @@ import classes from './Cell.module.css';
 // Component Imports:
 import Hexagon from '../Hexagon/Hexagon';
 // Helper imports:
-import { errorReport } from '../../helper/errorHelpers';
 
 import { useEffect, useState } from 'react';
 
@@ -27,6 +26,7 @@ const Cell = (props: Props) => {
 	const handleClick = (event: React.SyntheticEvent) => {
 		event.preventDefault();
 		event.stopPropagation();
+		console.log('clicked on cell - should be fast');
 		props.onClick(props.row, props.col);
 	};
 
