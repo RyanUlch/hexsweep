@@ -1,15 +1,25 @@
 // React imports:
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 // CSS import:
 import classes from './Game.module.css'
 // Bootstrap Imports:
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 // Component Imports:
 import ModalNewGame from '../Modals/ModalNewGame';
 import ModalSelect from '../Modals/ModalSelect';
-import Row from '../Row/Row';
+import CellRow from '../CellRow/CellRow';
+import ClickDragArea from '../ClickDragArea/ClickDragArea';
+import Timer from '../Timer/Timer';
+import SideCouple from '../SideCouple/SideCouple';
 
+import Header from '../Header/Header';
+import Footer from '../Footer/Footer';
+import StatsCard from '../StatsCard/StatsCard';
+import GameCard from '../GameCard/GameCard';
 import { infoArrGen, bufferGen, updateHints, bombGen} from '../../helpers/setupGameHelpers';
 
 // Game handles state and logic of game-play.
@@ -23,17 +33,22 @@ const Game = () => {
 		gameInfo: {
 			// Info regarding the amount of hints the user has to use, and if they have activated the free hint button
 			// FreeHintNum set by ({difficulty} - 2) 
-			freeHintNum: -1, 	freeHintNext: false, 	freeHintsLeft: -1,
+			freeHintNum: 0, 	freeHintNext: false, 	freeHintsLeft: 0,
 			// Info regarding current games bombs
-			bombNum: -1,		bombsFlagged: -1,
+			bombNum: 0,		bombsFlagged: 0,
 			// Info regarding larger game stats
-			gameNumber:	 0,		isFinished: true,
+			gameNumber:	 0,		isFinished: true,		clickedBomb: false,		difficulty: 0,
+			gamesWon: 0,
 		},
 		modalHint: false,
 		hintCell: [-1, -1],
 		modalGame: false,
-
 	});
+
+	// Reference to the game container (where the user plays, is passed to get correct sizing);
+	const gameAreaRef = useRef<HTMLDivElement>(null);
+	// State to indicate if user is dragging the play area, used to prevent accidental clicks of cells when moving play area
+	const [isDragged, setIsDragged] = useState(false);
 
 /* Update Game Function Section - Passed functions to components to update GameArray/GameInfo */
 
@@ -53,15 +68,22 @@ const Game = () => {
 			})
 			checkIfEndGame();
 		} else if (game.gameArray && game.gameArray[row].rowArray[col].isBomb) {
-			endGame(true);
-		} else if (game.gameArray && game.gameArray[row].rowArray[col].hint === -1) {
-			if (!checkIfEndGame()) {
-				setGame(prev => {
-					return {
-						...prev, modalHint: true, hintCell: [row, col],
+			setGame(prev => {
+				return {
+					...prev,
+					gameInfo: {
+						...prev.gameInfo,
+						isFinished: true,
+						clickedBomb: true,
 					}
-				})
-			}
+				}
+			})
+		} else if (game.gameArray && game.gameArray[row].rowArray[col].hint === -1) {
+			setGame(prev => {
+				return {
+					...prev, modalHint: true, hintCell: [row, col],
+				}
+			})
 		}
 	}
 
@@ -78,7 +100,7 @@ const Game = () => {
 				newArray[row].rowArray[col].cellState = 2;
 				newInfo.bombsFlagged = newInfo.bombsFlagged + 1;
 			}
-			return  {...prev, gameArray: newArray};
+			return  {...prev, gameArray: newArray, gameInfo: newInfo};
 		});
 		checkIfEndGame();
 	}
@@ -123,33 +145,41 @@ const Game = () => {
 	// Upon closing modal for cell hint, update state to show the correct hint the user selected. Also update the cellState to be "safe"
 	const closeModalHint = (hintRequest: number) => {
 		setGame(prev => {
-
 			const newArray = [...prev.gameArray];
 			newArray[prev.hintCell[0]].rowArray[prev.hintCell[1]].hint = hintRequest;
 			newArray[prev.hintCell[0]].rowArray[prev.hintCell[1]].cellState = 1;
-
 			return {
 				...prev,
 				gameArray: newArray,
 				modalHint: false,
 				hintCell: [-1, -1],
 			};
-
-		})
+		});
+		checkIfEndGame();
 	};
-// console.log(gameDifficulty)
+
 /* End Game Functions - called to check if the game is done, and if the user has won */
 	// Check if the game is over, if every cell is marked as safe or flagged, called after cells are marked
 	// If game is over, automatically go to handling the endGame
 	const checkIfEndGame = () => {
-			for (let i = 0; i < game.gameArray.length; ++i) {
-				for (let j = 0; j < game.gameArray[i].rowArray.length; ++j) {
-					if (game.gameArray[i].rowArray[j].cellState === 0) {
-						return false;
+		setGame(prev => {
+			for (let i = 0; i < prev.gameArray.length; ++i) {
+				for (let j = 0; j < prev.gameArray[i].rowArray.length; ++j) {
+					if (prev.gameArray[i].rowArray[j].cellState !== 0) {
+						continue;
+					} else {
+						return prev;
 					}
 				}
 			}
-			endGame();
+			return {
+				...prev,
+				gameInfo: {
+					...prev.gameInfo,
+					isFinished: true,
+				}
+			}
+		})
 	}
 	// Check that the cells marked safe and flagged are accurate to what the cell containers
 	const verifyGame = () => {
@@ -165,29 +195,41 @@ const Game = () => {
 		return true;
 	}
 	// Handle when the game has ended, can lose early by clicking on a cell with a bomb
-	const endGame = (hasLost: boolean = false) => {
-		if (!hasLost && verifyGame()) {
-			alert('You win!');
-		} else {
-			alert('you lose!');
-		}
-		setGame(prev => {
-			const newArr = [...prev.gameArray];
-			for (let i = 0; i < newArr.length; ++i) {
-				for (let j = 0; j < newArr[i].rowArray.length; ++j) {
-					newArr[i].rowArray[j].cellState = newArr[i].rowArray[j].isBomb ? 2 : 1;
+	useEffect(()=> {
+		if (game.gameInfo.isFinished && game.gameInfo.gameNumber > 0) {
+			if (!game.gameInfo.clickedBomb && verifyGame()) {
+				alert('You win!');
+				setGame(prev => {
+					return { 
+						...prev,
+						gameInfo: {
+							...prev.gameInfo,
+							gamesWon: prev.gameInfo.gamesWon+1,
+						}
+					}
+				})
+			} else {
+				alert('you lose!');
+			}
+			setGame(prev => {
+				const newArr = [...prev.gameArray];
+				for (let i = 0; i < newArr.length; ++i) {
+					for (let j = 0; j < newArr[i].rowArray.length; ++j) {
+						newArr[i].rowArray[j].cellState = newArr[i].rowArray[j].isBomb ? 2 : 1;
+					}
 				}
-			}
-			return {
-				...prev,
-				gameArray: newArr,
-				gameInfo: {
-					...prev.gameInfo,
-					isFinished: true,
-				},
-			}
-		})
-	}
+				return {
+					...prev,
+					gameArray: newArr,
+					gameInfo: {
+						...prev.gameInfo,
+						isFinished: true,
+					},
+				}
+			})
+		}
+	}, [game.gameInfo.isFinished]);
+	
 
 /* UseEffect Section - used for creating new games, and setting new difficulties */
 	// Create Game and set gameArray
@@ -199,13 +241,16 @@ const Game = () => {
 
 		setGame(prev => {
 			const gameInfo = {
-				freeHintNum: difficulty - 2,
+				difficulty: difficulty,
+				freeHintNum: difficulty-2 > 0 ? difficulty-2 : 1,
 				freeHintNext: false,
-				freeHintsLeft: difficulty -2,
+				freeHintsLeft: difficulty-2 > 0 ? difficulty-2 : 1,
 				bombNum: Math.floor(cellAmt / 4 + Math.random() * difficulty),
 				bombsFlagged: 0,
 				gameNumber: prev.gameInfo.gameNumber+1,
 				isFinished: false,
+				clickedBomb: false,
+				gamesWon: prev.gameInfo.gamesWon,
 			}
 			const arr: gameArray = [];
 			// Create the all the rows in gameArray
@@ -240,7 +285,7 @@ const Game = () => {
 				}
 			}
 			// Generate bomb array, update gameArray, and return bombArray to update hints
-			const bombArr = bombGen(arr, rowAmt, cellAmt, midCell, difficulty);
+			const bombArr = bombGen(arr, rowAmt, cellAmt, midCell, gameInfo.bombNum);
 			// Update hints, mutating the array
 			updateHints(arr, bombArr, difficulty);
 			return {
@@ -256,22 +301,62 @@ const Game = () => {
 		<>
 			<ModalSelect show={game.modalHint} handleClose={closeModalHint} />
 			<ModalNewGame show={game.modalGame} handleClose={closeModalGame} />
-			<Card className={`border border-success rounded ${classes.gameCard}`}>
-				<Card.Header>
-					<h1>Hex-Sweep</h1>
-				</Card.Header>
-				<Card.Body className={classes.gameArea}>
-					{/* <Row key={`R${0}`} rowNum={0} rowArray={[{isBomb: false, hints: [0, 0, 0], hint: 1, cellState: 0 }]} buffer={0} onClick={handleCellClick} onFlag={createFlag}/> */}
-					{game.gameArray.map((row, index) => {
-						return <Row key={`R${index}`} rowNum={index} rowArray={row.rowArray} buffer={row.buffer} onClick={handleCellClick} onFlag={createFlag}/>;
-					})}
-				</Card.Body>
-				<Card.Footer>
-					<Button className={game.gameInfo.freeHintNext ? classes.hintBtnActive : classes.hintBtn} disabled={game.gameInfo.freeHintsLeft === 0} onClick={freeHintHandler}>{`Free Hint (${game.gameInfo.freeHintsLeft}/${game.gameInfo.freeHintNum}) left`}</Button>
-					<Button className={classes.restartBtn} onClick={restartGame}>{`New Game`}</Button>
-					<Button>{game.gameInfo.bombsFlagged}/{game.gameInfo.bombNum} Bombs</Button>
-				</Card.Footer>
-			</Card>
+			{/* 
+				<Row className={`${classes.cardContainer} m-0`}>
+					<Card className={`border ${game.gameInfo.isFinished ? 'border-success' : 'border-danger'} rounded p-0 ${classes.gameCard}`}>
+						<Card.Body ref={gameAreaRef} className={`${classes.gameArea} p-0`}>
+
+							<ClickDragArea setDrag={setIsDragged} gameStart={game.gameInfo.gameNumber > 0} parentRef={gameAreaRef} difficulty={game.gameInfo.difficulty}>
+								{game.gameArray.map((row, index) => {
+									return <CellRow key={`R${index}`} rowNum={index} rowArray={row.rowArray} buffer={row.buffer} isDragged={isDragged} gameNum={game.gameInfo.gameNumber} setDragged={setIsDragged} onClick={handleCellClick} onFlag={createFlag}/>;
+								})}
+							</ClickDragArea>
+						</Card.Body>
+					</Card>
+					<Card className={`border rounded p-0 ${classes.statsCard}`}>
+						<Card.Header className={classes.mainCardHeader}>
+							<h2>Stats & Tools</h2>
+						</Card.Header>
+						<Card.Body>
+							<div className={classes.sideArea}>
+								<SideCouple isButton={true} isDisabled={game.gameInfo.freeHintsLeft === 0} isActive={game.gameInfo.freeHintNext} clickHandler={freeHintHandler}>
+									<h4>Free Hints Available:</h4>
+									<p>{`${game.gameInfo.freeHintsLeft}/${game.gameInfo.freeHintNum} Hints Left`}</p>
+								</SideCouple>
+								<hr />
+								<SideCouple>
+									<h4>Bombs Found/Total:</h4>
+									<p>{game.gameInfo.bombsFlagged}/{game.gameInfo.bombNum} Bombs</p>
+								</SideCouple>
+								<hr />
+								<SideCouple>
+									<h4>Game Time:</h4>
+									<Timer id='timer' isStopped={game.gameInfo.isFinished} gameNumber={game.gameInfo.gameNumber}/>
+								</SideCouple>
+								<hr />
+								<SideCouple>
+									<h4>Games Won:</h4>
+									<p>{game.gameInfo.gamesWon}/{game.gameInfo.gameNumber}</p>
+								</SideCouple>
+							</div>
+						</Card.Body>
+						<a className={classes.restartLink} onClick={restartGame}>
+							<Card.Footer className={classes.sideFooter}>
+								<h3>New Game</h3>
+							</Card.Footer>
+						</a>
+					</Card>
+					
+				</Row>*/}
+
+			<Row className={`${classes.gameRow}`}>
+				<Col md={9} className={`${classes.gameCol}`}>
+					<GameCard info={game.gameInfo} arr={game.gameArray} cellClick={handleCellClick} createFlag={createFlag}/>
+				</Col>
+				<Col md={3} className={classes.statsCol}>
+					<StatsCard info={game.gameInfo} newGame={restartGame} newHint={freeHintHandler} />
+				</Col>
+			</Row>	
 		</>
 	);
 };

@@ -1,0 +1,25 @@
+.statsCard {
+	justify-self: flex-end;
+	align-self:flex-end;
+	height: fit-content;
+}
+
+.newGameBtn {
+	user-select: all;
+	/* background-color:); */
+}
+
+.newGameBtn:hover {
+	background-color: var(--hintBtnHover);
+	cursor: pointer;
+}
+
+.coupleTitle {
+	text-align: center;
+	font-weight: bold;
+	font-size: clamp(1rem, 2vw, 2rem);
+}
+
+.coupleBody {
+	text-align: center;
+}

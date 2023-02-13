@@ -64,9 +64,9 @@ export const updateHints = (arr: gameArray, bombArr: number[][], difficulty: num
 };
 
 // Generates the locations of the bomb-cells mutates passed array, and returns array of the bombs locations
-export const bombGen = (arr: gameArray, rowAmt: number, cellAmt: number, midCell: number[], difficulty: number) => {
+export const bombGen = (arr: gameArray, rowAmt: number, cellAmt: number, midCell: number[], bombNum: number) => {
 	const bombArr: number[][] = [];
-	const bombNum: number = Math.floor(cellAmt / 4 + Math.random() * difficulty);
+	// const bombNum: number = Math.floor(cellAmt / 4 + Math.random() * difficulty);
 	for (let i = 0; i < bombNum; ++i) {
 		let row = Math.floor(Math.random() * rowAmt);
 		let col = Math.floor(Math.random() * arr[row].rowArray.length);

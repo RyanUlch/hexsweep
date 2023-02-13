@@ -1,0 +1,17 @@
+.dragArea {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 200%;
+	height: 200%;
+}
+
+.rowContainer {
+	/* display: flex; */
+	/* flex-direction: row; */
+	/* flex-wrap: nowrap; */
+	/* width: 100%; */
+	/* justify-content: center; */
+	/* gap: var(--rowGap); */
+	/* height: var(--rowHeight); */
+}

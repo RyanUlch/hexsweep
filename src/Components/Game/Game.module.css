@@ -1,34 +1,35 @@
-.gameContainer {
-	/* width: 80vw; */
-	margin: auto;
-	border: var(--borderWidth) solid var(--borderColor);
+@media (max-width: 768px) {
+	.gameRow {
+		display: flex;
+		flex-flow: column nowrap;
+		flex-grow: 1;
+		gap: 1rem;
+		justify-content: space-between;
+		height: 100%;
+	}
 }
 
-.hintBtn {
-	background-color: var(--hintBtn);
-}
-
-.hintBtn:hover {
-	background-color: var(--hintBtnHover);
-}
-
-.hintBtnActive {
-	background-color: var(--hintBtnActive);
-}
-
-.hintBtnActive:hover {
-	background-color: var(--hintBtnActiveHover);
-}
-
-.restartBtn {
+@media (min-width: 768px) {
+	.gameRow {
+		display: flex;
+		flex-flow: row wrap;
+		flex-grow: 1;
+		justify-content: space-between;
+	}
 	
 }
 
-.gameCard {
-	width: max-content;
+.gameCol {
+	display: flex;
+	/* flex-direction: column; */
+	/* flex:none !important; */
+	/* flex-basis: 100%; */
+	flex-grow: 1;
+	/* height: 100%; */
 }
 
-.gameArea {
-	margin: var(--gameMargin);
-	padding: var(--gamePadding);
+.statsCol {
+	/* height: 250px; */
+	/* flex-basis: 0%; */
+	/* flex-grow:1; */
 }

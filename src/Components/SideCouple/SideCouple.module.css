@@ -1,0 +1,48 @@
+/* .sideCouple {
+	height: 100%;
+}
+/*
+.titleHolder:first-child { */
+	/* font-size: var(--titleSize); */
+	/* font-size: 0;
+}
+
+.body {
+	display: flex;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+}
+*/
+
+.btn {
+	user-select: all;
+}
+.btn:hover {
+	cursor: pointer;
+
+}
+
+.btnBody {
+	background-color: var(--hintBtn);
+}
+
+.btnBody:hover {
+	background-color: var(--hintBtnHover);
+}
+
+.active {
+	background-color: var(--hintBtnActive) !important;
+}
+
+.active:hover {
+	background-color: var(--hintBtnActiveHover) !important;
+}
+
+.disabled {
+	background-color: var(--disabledColor) !important;
+}
+
+.card {
+	height: 100%;
+}

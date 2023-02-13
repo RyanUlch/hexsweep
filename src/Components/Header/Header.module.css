@@ -1,0 +1,17 @@
+.headerRow {
+	height: fit-content;
+	flex-grow: 0;
+}
+
+.headerCard {
+	border-radius: 0 0 .375rem .375rem !important;
+	border-top: 0;
+	padding: 0;
+}
+
+.headerText {
+	text-align: center;
+	font-size: var(--titleSize);
+	font-family: var(--fancyFont);
+	margin: 0;
+}

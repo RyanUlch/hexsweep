@@ -1,0 +1,24 @@
+.footerRow {
+	height: fit-content;
+	flex-grow: 0;
+}
+
+.footerCard {
+	border-radius: .375rem .375rem 0 0 !important;
+	border-bottom: 0;
+	padding: 0;
+}
+
+.footerTextHeader {
+	text-align: center;
+	font-size: var(--titleSize);
+	font-family: var(--fancyFont);
+	margin: 0;
+}
+
+.footerTextBody {
+	text-align: center;
+	font-size: var(--textSize);
+	font-family: var(--standFont);
+	margin: 0;
+}

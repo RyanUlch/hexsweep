@@ -9,9 +9,10 @@
 	align-items: center;
 	position: absolute;	
 	padding: 0;
-	width: var(--cellWidth);
-	height: var(--cellHeight);
+	width: var(--hexSide);
+	height: var(--hexHeight);
 	background-color: inherit;
+	visibility: visible;
 }
 
 /* Two of the div's are rotated 60, and -60 degrees to create a hexagon shape */

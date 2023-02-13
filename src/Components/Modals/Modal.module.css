@@ -1,0 +1,11 @@
+.group {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	gap: 20px;
+}
+
+.btn {
+	width: 30%;
+}

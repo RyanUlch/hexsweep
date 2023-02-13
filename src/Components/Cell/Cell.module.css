@@ -29,12 +29,14 @@
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
-	width: var(--cellWidth);
-	height: var(--cellHeight);
+	width: var(--hexWidth);
+	height: var(--hexWidth);
+	visibility: hidden;
 }
 
 
 .text {
 	z-index: 5;
 	margin: 0;
+	visibility: visible;
 }

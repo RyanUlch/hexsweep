@@ -27,3 +27,16 @@ type gameArray = {buffer: buffer, rowArray: cellInfo[]}[];
 		}
 	]
 */
+
+type gameInfo = {
+	freeHintNum: number,
+	freeHintNext: boolean,
+	freeHintsLeft: number,
+	bombNum: number,
+	bombsFlagged: number,
+	gameNumber:	 number,
+	isFinished: boolean,
+	clickedBomb: boolean,
+	difficulty: number,
+	gamesWon: number,
+}

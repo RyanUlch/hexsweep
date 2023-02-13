@@ -1,5 +1,6 @@
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import classes from './Modal.module.css';
 
 interface Props {
 	show: boolean
@@ -25,11 +26,11 @@ const ModalNewGame = (props: Props) => {
 		if (props.show) {
 			let value = -1;
 			switch(e.key) {
-				case "1": value = 3; break;
-				case "2": value = 4; break;
-				case "3": value = 5; break;
-				case "4": value = 6; break;
-				case "5": value = 7; break;
+				case "1": value = 2; break;
+				case "2": value = 3; break;
+				case "3": value = 4; break;
+				case "4": value = 5; break;
+				case "5": value = 6; break;
 			}
 			if (value > -1) {
 				handleClose(value);
@@ -42,20 +43,20 @@ const ModalNewGame = (props: Props) => {
 			<Modal.Header>
 				<Modal.Title>Select Difficulty:</Modal.Title>
 			</Modal.Header>
-			<Modal.Body>
-				<Button variant="primary" id={'3'} onClick={handleSelect}>
+			<Modal.Body className={classes.group}>
+				<Button className={classes.btn} variant="primary" id={'2'} onClick={handleSelect}>
 					{`Beginner (1)`}
 				</Button>
-				<Button variant="primary" id={'4'} onClick={handleSelect}>
+				<Button className={classes.btn} variant="primary" id={'3'} onClick={handleSelect}>
 					{`Easy (2)`}
 				</Button>
-				<Button variant="primary" id={'5'} onClick={handleSelect}>
+				<Button className={classes.btn} variant="primary" id={'4'} onClick={handleSelect}>
 					{`Medium (recommended) (3)`}
 				</Button>
-				<Button variant="primary" id={'6'} onClick={handleSelect}>
+				<Button className={classes.btn} variant="primary" id={'5'} onClick={handleSelect}>
 					{`Hard (4)`}
 				</Button>
-				<Button variant="primary" id={'7'} onClick={handleSelect}>
+				<Button className={classes.btn} variant="primary" id={'6'} onClick={handleSelect}>
 					{`Impossible (5)`}
 				</Button>
 			</Modal.Body>

@@ -6,13 +6,18 @@ import Hexagon from '../Hexagon/Hexagon';
 
 import { useEffect, useState } from 'react';
 
+import type { Dispatch, SetStateAction } from 'react';
+
 // Props interface:
-export interface Props {
-	cellInfo: cellInfo;
-	row: number;
-	col: number;
-	onClick: (row: number, col: number) => void;
-	onFlag: (row: number, col: number) => void;
+interface Props {
+	cellInfo: cellInfo,
+	row: number,
+	col: number,
+	isDragged: boolean,
+	gameNum: number,
+	setDragged: Dispatch<SetStateAction<boolean>>,
+	onClick: (row: number, col: number) => void,
+	onFlag: (row: number, col: number) => void,
 }
 
 // Cell used to display current state of 1 game piece.
@@ -26,8 +31,10 @@ const Cell = (props: Props) => {
 	const handleClick = (event: React.SyntheticEvent) => {
 		event.preventDefault();
 		event.stopPropagation();
-		console.log('clicked on cell - should be fast');
-		props.onClick(props.row, props.col);
+		console.log(`Currently being dragged: ${props.isDragged}`)
+		if (!props.isDragged) {
+			props.onClick(props.row, props.col);
+		}
 	};
 
 	const handleFlag = (event: React.SyntheticEvent) => {
@@ -57,7 +64,7 @@ const Cell = (props: Props) => {
 				default: return <></>;
 			}
 		})
-	}, [props.cellInfo.hint]);
+	}, [props.cellInfo.hint, props.gameNum]);
 
 	// Show hint text above Hexagon background. Hint number and symbol provided by parent
 	// Click event to send row and column info up to parent

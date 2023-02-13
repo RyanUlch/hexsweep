@@ -6,4 +6,5 @@
 	justify-content: center;
 	gap: var(--rowGap);
 	height: var(--rowHeight);
+	overflow:initial;
 }
