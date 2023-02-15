@@ -39,4 +39,16 @@
 	z-index: 5;
 	margin: 0;
 	visibility: visible;
+	font-size: var(--fontSize);
+}
+
+.allHintText {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	z-index: 5;
+	margin: 0;
+	visibility: visible;
+	font-size: var(--fontSize);
 }

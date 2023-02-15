@@ -1,4 +1,5 @@
 .headerRow {
+	max-height: 8vh;
 	height: fit-content;
 	flex-grow: 0;
 }
@@ -13,5 +14,6 @@
 	text-align: center;
 	font-size: var(--titleSize);
 	font-family: var(--fancyFont);
+	font-weight: bold;
 	margin: 0;
 }

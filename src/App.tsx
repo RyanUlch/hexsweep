@@ -4,6 +4,9 @@ import Footer		from 	'./Components/Footer/Footer';
 import Container	from 	'react-bootstrap/Container';
 import						'./index.scss';
 
+
+// fix hints not updating bomb found number
+
 function App() {
 	return (
 		<div id='fullContainer'>

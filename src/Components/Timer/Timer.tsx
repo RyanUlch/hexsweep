@@ -51,7 +51,7 @@ const Timer = (props: Props) => {
 /* useEffect Section End */
 
 	// Simple display to show current time
-	return (<div>{timer[0] < 10 ? ('0'+timer[0]) : timer[0]}:{timer[1] < 10 ? ('0'+timer[1]) : timer[1]}</div>);
+	return (<div style={{textAlign: 'center'}}>{timer[0] < 10 ? ('0'+timer[0]) : timer[0]}:{timer[1] < 10 ? ('0'+timer[1]) : timer[1]}</div>);
 }
 
 export default Timer;

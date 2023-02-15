@@ -12,15 +12,15 @@ interface Props {
 
 const SideCouple = (props: Props) => {
 	return (
-		<Col>
+		<Col className={classes.column}>
 			<Card className={`${classes.card} ${props.isButton && !props.isDisabled ? classes.btn :''}`} onClick={props.isButton && !props.isDisabled ? props.clickHandler : ()=>{}}>
-				<Card.Header className={classes.titleHolder}>
+				<Card.Header className={`cardHeader ${classes.titleHolder}`}>
 					{props.children[0]}
 				</Card.Header>
-				<Card.Body className={`
+				<Card.Body className={`cardHighlight
 					${props.isButton && classes.btnBody}
 					${props.isActive && !props.isDisabled && classes.active}
-					${props.isDisabled && classes.disabled }`
+					${props.isDisabled && classes.disabled}`
 				}>
 					{props.children[1]}
 				</Card.Body>

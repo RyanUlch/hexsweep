@@ -9,6 +9,7 @@
 	/* background-color:); */
 }
 
+
 .newGameBtn:hover {
 	background-color: var(--hintBtnHover);
 	cursor: pointer;
@@ -22,4 +23,26 @@
 
 .coupleBody {
 	text-align: center;
+}
+
+.newGameLink {
+	border: 0;
+	padding: 0;
+	text-align: center;
+	color: var(--textColor);
+	background-color: var(--linkColor);
+}
+
+.newGameLink:hover {
+	color: var(--textColor);
+	background-color: var(--linkHoverColor);
+}
+
+.newGameLink:active {
+	color: var(--textColor);
+	background-color: var(--linkActiveColor);
+}
+
+.linkTitle {
+	text-decoration: underline;
 }

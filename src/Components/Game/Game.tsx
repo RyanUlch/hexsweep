@@ -3,21 +3,12 @@ import { useState, useEffect, useRef } from 'react';
 // CSS import:
 import classes from './Game.module.css'
 // Bootstrap Imports:
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
-import Container from 'react-bootstrap/Container';
+
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 // Component Imports:
 import ModalNewGame from '../Modals/ModalNewGame';
 import ModalSelect from '../Modals/ModalSelect';
-import CellRow from '../CellRow/CellRow';
-import ClickDragArea from '../ClickDragArea/ClickDragArea';
-import Timer from '../Timer/Timer';
-import SideCouple from '../SideCouple/SideCouple';
-
-import Header from '../Header/Header';
-import Footer from '../Footer/Footer';
 import StatsCard from '../StatsCard/StatsCard';
 import GameCard from '../GameCard/GameCard';
 import { infoArrGen, bufferGen, updateHints, bombGen} from '../../helpers/setupGameHelpers';
@@ -114,6 +105,7 @@ const Game = () => {
 			newArr[row].rowArray[col].hint = 3;
 			newInfo.freeHintNext = false;
 			newInfo.freeHintsLeft = newInfo.freeHintsLeft -1;
+			// newInfo.bombsFlagged += newArr[row].rowArray[col].isBomb ? 1 : 0;
 			return {...prev, gameArray: newArr};
 		});
 	}
@@ -139,7 +131,16 @@ const Game = () => {
 
 	// Upon closing modal for a new game, update the game info with the difficulty, and game number
 	const closeModalGame = (difficulty: number) => {
-		createGame(difficulty);
+		if (difficulty > 0) {
+			createGame(difficulty);
+		} else {
+			setGame(prev => {
+				return {
+					...prev,
+					modalGame: false,
+				}
+			})
+		}
 	}
 	// Note: handling the showing of the Hint Modal is based in {Cell} since it needs the specific cell info to update correctly
 	// Upon closing modal for cell hint, update state to show the correct hint the user selected. Also update the cellState to be "safe"
@@ -301,59 +302,11 @@ const Game = () => {
 		<>
 			<ModalSelect show={game.modalHint} handleClose={closeModalHint} />
 			<ModalNewGame show={game.modalGame} handleClose={closeModalGame} />
-			{/* 
-				<Row className={`${classes.cardContainer} m-0`}>
-					<Card className={`border ${game.gameInfo.isFinished ? 'border-success' : 'border-danger'} rounded p-0 ${classes.gameCard}`}>
-						<Card.Body ref={gameAreaRef} className={`${classes.gameArea} p-0`}>
-
-							<ClickDragArea setDrag={setIsDragged} gameStart={game.gameInfo.gameNumber > 0} parentRef={gameAreaRef} difficulty={game.gameInfo.difficulty}>
-								{game.gameArray.map((row, index) => {
-									return <CellRow key={`R${index}`} rowNum={index} rowArray={row.rowArray} buffer={row.buffer} isDragged={isDragged} gameNum={game.gameInfo.gameNumber} setDragged={setIsDragged} onClick={handleCellClick} onFlag={createFlag}/>;
-								})}
-							</ClickDragArea>
-						</Card.Body>
-					</Card>
-					<Card className={`border rounded p-0 ${classes.statsCard}`}>
-						<Card.Header className={classes.mainCardHeader}>
-							<h2>Stats & Tools</h2>
-						</Card.Header>
-						<Card.Body>
-							<div className={classes.sideArea}>
-								<SideCouple isButton={true} isDisabled={game.gameInfo.freeHintsLeft === 0} isActive={game.gameInfo.freeHintNext} clickHandler={freeHintHandler}>
-									<h4>Free Hints Available:</h4>
-									<p>{`${game.gameInfo.freeHintsLeft}/${game.gameInfo.freeHintNum} Hints Left`}</p>
-								</SideCouple>
-								<hr />
-								<SideCouple>
-									<h4>Bombs Found/Total:</h4>
-									<p>{game.gameInfo.bombsFlagged}/{game.gameInfo.bombNum} Bombs</p>
-								</SideCouple>
-								<hr />
-								<SideCouple>
-									<h4>Game Time:</h4>
-									<Timer id='timer' isStopped={game.gameInfo.isFinished} gameNumber={game.gameInfo.gameNumber}/>
-								</SideCouple>
-								<hr />
-								<SideCouple>
-									<h4>Games Won:</h4>
-									<p>{game.gameInfo.gamesWon}/{game.gameInfo.gameNumber}</p>
-								</SideCouple>
-							</div>
-						</Card.Body>
-						<a className={classes.restartLink} onClick={restartGame}>
-							<Card.Footer className={classes.sideFooter}>
-								<h3>New Game</h3>
-							</Card.Footer>
-						</a>
-					</Card>
-					
-				</Row>*/}
-
 			<Row className={`${classes.gameRow}`}>
-				<Col md={9} className={`${classes.gameCol}`}>
+				<Col xs={0} md={9} className={`${classes.gameCol}`}>
 					<GameCard info={game.gameInfo} arr={game.gameArray} cellClick={handleCellClick} createFlag={createFlag}/>
 				</Col>
-				<Col md={3} className={classes.statsCol}>
+				<Col xs={0} md={3} className={classes.statsCol}>
 					<StatsCard info={game.gameInfo} newGame={restartGame} newHint={freeHintHandler} />
 				</Col>
 			</Row>	

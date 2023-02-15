@@ -33,6 +33,6 @@
 
 .gameAreaBody {
 	flex-grow: 1;
-	background-color: lightblue;
+	background-color: var(--playBackgroundColor);
 	overflow: hidden;
 }

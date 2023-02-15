@@ -1,7 +1,7 @@
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import classes from './Modal.module.css';
-
+import { ButtonGroup } from 'react-bootstrap';
 interface Props {
 	show: boolean
 	handleClose: (difficulty: number)=>void
@@ -11,6 +11,10 @@ const ModalNewGame = (props: Props) => {
 	const handleClose = (value: number) => {
 		props.handleClose(value);
 	};
+
+	const handleCancel = () => {
+		props.handleClose(-1);
+	}
 
 	// Handle user selecting hint through button
 	const handleSelect = (e: React.SyntheticEvent) => {
@@ -39,27 +43,33 @@ const ModalNewGame = (props: Props) => {
 	}
 
 	return (
-		<Modal show={props.show} >
-			<Modal.Header>
+		<Modal show={props.show} onHide={handleCancel}>
+			<Modal.Header className={classes.modalHeader}>
 				<Modal.Title>Select Difficulty:</Modal.Title>
+				<Button onClick={handleCancel} type="button" className="btn-close" aria-label="Close"></Button>
 			</Modal.Header>
-			<Modal.Body className={classes.group}>
-				<Button className={classes.btn} variant="primary" id={'2'} onClick={handleSelect}>
-					{`Beginner (1)`}
-				</Button>
-				<Button className={classes.btn} variant="primary" id={'3'} onClick={handleSelect}>
-					{`Easy (2)`}
-				</Button>
-				<Button className={classes.btn} variant="primary" id={'4'} onClick={handleSelect}>
-					{`Medium (recommended) (3)`}
-				</Button>
-				<Button className={classes.btn} variant="primary" id={'5'} onClick={handleSelect}>
-					{`Hard (4)`}
-				</Button>
-				<Button className={classes.btn} variant="primary" id={'6'} onClick={handleSelect}>
-					{`Impossible (5)`}
-				</Button>
+			<Modal.Body className={`${classes.group}`}>
+				<ButtonGroup>
+					<Button className={classes.btn} variant="primary" id={'2'} onClick={handleSelect}>
+						{`Beginner (1)`}
+					</Button>
+					<Button className={classes.btn} variant="primary" id={'3'} onClick={handleSelect}>
+						{`Easy (2)`}
+					</Button>
+					<Button className={classes.btn} variant="primary" id={'4'} onClick={handleSelect}>
+						{`Medium (3)`}
+					</Button>
+					<Button className={classes.btn} variant="primary" id={'5'} onClick={handleSelect}>
+						{`Hard (4)`}
+					</Button>
+					<Button className={classes.btn} variant="primary" id={'6'} onClick={handleSelect}>
+						{`Impossible (5)`}
+					</Button>
+				</ButtonGroup>
 			</Modal.Body>
+			<Modal.Footer className={classes.modalFooter}>
+				<p className={classes.tip}>Tip: You can select the difficulty with the number buttons (1-5)</p>
+			</Modal.Footer>
 		</Modal>
 	)
 }

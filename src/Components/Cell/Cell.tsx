@@ -2,6 +2,7 @@
 import classes from './Cell.module.css';
 // Component Imports:
 import Hexagon from '../Hexagon/Hexagon';
+import Arrow from '../Arrow/Arrow';
 // Helper imports:
 
 import { useEffect, useState } from 'react';
@@ -49,18 +50,18 @@ const Cell = (props: Props) => {
 		setHint(() => {
 			switch (props.cellInfo.hint) {
 				case 0: 
-					return <p className={classes.text}>{`${props.cellInfo.hints[props.cellInfo.hint]} \u2921`}</p>;
+					return <span className={classes.text}>{`${props.cellInfo.hints[props.cellInfo.hint]}`}<Arrow arrowType={0}/></span>;
 				case 1:
-					return <p className={classes.text}>{`${props.cellInfo.hints[props.cellInfo.hint]} \u2B0D`}</p>;
+					return <span className={classes.text}>{`${props.cellInfo.hints[props.cellInfo.hint]}`}<Arrow arrowType={1}/></span>;
 				case 2:
-					return <p className={classes.text}>{`${props.cellInfo.hints[props.cellInfo.hint]} \u2922`}</p>;
+					return <span className={classes.text}>{`${props.cellInfo.hints[props.cellInfo.hint]}`}<Arrow arrowType={2}/></span>;
 				case 3:
 					return (
-					<>
-						<p className={classes.text}>{`${props.cellInfo.hints[0]}\u2921`}</p>
-						<p className={classes.text}>{`${props.cellInfo.hints[1]}\u2B0D`}</p>
-						<p className={classes.text}>{`${props.cellInfo.hints[2]}\u2922`}</p>
-					</>)
+					<span className={classes.allHintText}>
+						<p>{props.cellInfo.hints[1]}<Arrow arrowType={1} /></p>
+						<p>{props.cellInfo.hints[0]}<Arrow arrowType={0} />&nbsp;
+						{props.cellInfo.hints[2]}<Arrow arrowType={2} /></p>
+					</span>)
 				default: return <></>;
 			}
 		})
@@ -75,7 +76,7 @@ const Cell = (props: Props) => {
 			className={`${classes.cell} ${props.cellInfo.cellState === 0 ? classes.inactive : props.cellInfo.cellState === 1 ? classes.safe : classes.bomb}`}
 			// className={props.cellInfo.isBomb ? classes.bomb : classes.safe}
 		>
-			
+
 				{hint}
 			
 			<Hexagon />

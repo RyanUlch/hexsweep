@@ -19,17 +19,29 @@
 
 	--hintBtn: hsl(208, 100%, 45%);
 	--hintBtnHover: hsl(208, 100%, 35%);
-	--hintBtnActive: hsl(91, 100%, 45%);
-	--hintBtnActiveHover: hsl(91, 100%, 35%);
+	--hintBtnActive: hsl(91, 50%, 60%);
+	--hintBtnActiveHover: hsl(91, 50%, 40%);
 	--disabledColor: hsl(208, 0%, 45%);
 
+	--cardOffColor: hsl(90, 70%, 80%);
+	--cardOnColor: hsl(90, 70%, 95%);
+	--cardHighlight: hsl(90, 70%, 90%);
+
+	--playBackgroundColor: hsl(200, 50%, 80%);
+	--pageBackground: hsl(80, 10%, 95%);
+
+	--linkColor: var(--playBackgroundColor);
+	--linkHoverColor: hsl(200, 50%, 60%);
+	--linkActiveColor: hsl(200, 50%, 70%);
+	--textColor: hsl(0, 0%, 20%);
+
 	/* Size Defaults */
-	--fontSize: clamp(1rem, 2vw, 2rem);
+	--fontSize: clamp(0.8rem, 2vw, 2rem);
 
 	// Cell properties (based off of height
 	// Using Calculator: https://www.omnicalculator.com/math/hexagon
 		// Height (s) - clamped to shrink and expand with screen size
-	--hexHeight: clamp(2rem, 7vw, 6rem);
+	--hexHeight: clamp(2.5rem, 9vw, 7rem);
 		// Side Length (a) - used for the width of rectangular div's
 	--hexSide: calc(var(--hexHeight)*0.5774);
 		// Width (d) - width of entire hex when laying on side.
@@ -49,8 +61,9 @@
 	
 
 	// Fonts
-	--fancyFont: ;
-	--standFont: ;
+	--standFont:		'Merriweather', serif;
+	// --standFont:	'Sigmar One', sans-serif;
+	--fancyFont:		'Vujahday Script', "Brush Script MT", cursive;
 }
 
 #pageContainer {
@@ -58,6 +71,8 @@
 	flex-flow: column nowrap;
 	justify-content: space-between;
 	gap: 1rem;
+	min-width: 460px;
+
 	// min-height: 100vh;
 }
 
@@ -76,8 +91,26 @@ body {
 	height: 100vh;
 	width: 100vw;
 	overflow: hidden;
+	background-color: var(--pageBackground);
 }
 
 p {
 	margin: 0;
+}
+
+p, span, h1, h2, h3, h4, h5, h6 {
+	color: var(--textColor);
+	font-family: var(--standFont);
+}
+
+.cardBody {
+	background-color: var(--cardOnColor);
+}
+
+.cardHeader {
+	background-color: var(--cardOffColor);
+}
+
+.cardHighlight {
+	background-color: var(--cardHighlight);
 }

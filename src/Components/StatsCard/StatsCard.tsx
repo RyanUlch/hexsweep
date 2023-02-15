@@ -5,6 +5,7 @@ import Timer from '../Timer/Timer';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
 
 interface Props {
 	info: gameInfo,
@@ -15,36 +16,36 @@ interface Props {
 const StatsCard = (props: Props) => {
 	return (
 		<Card className={classes.statsCard}>
-			<Card.Header>
+			<Card.Header className='cardHeader'>
 				Stats & Tools
 			</Card.Header>
-			<Card.Body>
-				{/* <Container className='p-0'> */}
+			<Card.Body className='cardBody'>
+				<Container className='p-0'>
 					<Row xs={4} md={1} className={classes.sideCoupleContainer}>
 						<SideCouple isButton={true} isDisabled={props.info.freeHintsLeft === 0} isActive={props.info.freeHintNext} clickHandler={props.newHint}>
-							<p className={classes.coupleTitle}>Hints:</p>
+							<p className={`${classes.coupleTitle} ${classes.linkTitle}`}>Hints:</p>
 							<p className={classes.coupleBody}>{`${props.info.freeHintsLeft}/${props.info.freeHintNum} Left`}</p>
 						</SideCouple>
 						<SideCouple>
 							<p className={classes.coupleTitle}>Found:</p>
-							<p className={classes.coupleBody}>{props.info.bombsFlagged}/{props.info.bombNum} Bombs</p>
+							<p className={classes.coupleBody}>{props.info.bombsFlagged}/{props.info.bombNum}</p>
 						</SideCouple>
 						<SideCouple>
-							<p className={classes.coupleTitle}>Game Time:</p>
+							<p className={classes.coupleTitle}>Time:</p>
 							<Timer id='timer' isStopped={props.info.isFinished} gameNumber={props.info.gameNumber}/>
 						</SideCouple>
 						<SideCouple>
-							<p className={classes.coupleTitle}>Games Won:</p>
+							<p className={classes.coupleTitle}>Won:</p>
 							<p className={classes.coupleBody}>{props.info.gamesWon}/{props.info.gameNumber}</p>
 						</SideCouple>
 					</Row>
-				{/* </Container> */}
+				</Container>
 			</Card.Body>
-			<a className={props.info.freeHintNext ? classes.newGameBtnActive : classes.newGameBtn} onClick={props.newGame}>
+			<button className={`${classes.newGameLink} ${props.info.freeHintNext ? classes.newGameBtnActive : classes.newGameBtn}`} onClick={props.newGame}>
 				<Card.Footer>
 					New Game
 				</Card.Footer>
-			</a>
+			</button>
 		</Card>
 	)
 }

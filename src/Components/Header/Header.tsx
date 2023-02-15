@@ -10,7 +10,7 @@ const Header = () => {
 		<Row className={classes.headerRow}>
 			<header className='p-0'>
 				<Card className={classes.headerCard}>
-					<Card.Header>
+					<Card.Header className='cardHeader'>
 						<h1 className={classes.headerText}>Hex-Sweep</h1>
 					</Card.Header>
 				</Card>
