@@ -43,13 +43,13 @@ const ModalNewGame = (props: Props) => {
 	}
 
 	return (
-		<Modal show={props.show} onHide={handleCancel}>
+		<Modal className={classes.modal} show={props.show} onHide={handleCancel}>
 			<Modal.Header className={classes.modalHeader}>
 				<Modal.Title>Select Difficulty:</Modal.Title>
 				<Button onClick={handleCancel} type="button" className="btn-close" aria-label="Close"></Button>
 			</Modal.Header>
-			<Modal.Body className={`${classes.group}`}>
-				<ButtonGroup>
+			<Modal.Body className={`${classes.modalBody}`}>
+				<ButtonGroup className={classes.btnGroup}>
 					<Button className={classes.btn} variant="primary" id={'2'} onClick={handleSelect}>
 						{`Beginner (1)`}
 					</Button>

@@ -1,10 +1,23 @@
-.group {
+.modal {
+	max-width: 100vw !important;
+}
+
+.modalHeader {
+	background-color: var(--cardOffColor);
+}
+
+.modalBody {
 	background-color: var(--cardOnColor);
+}
+
+.btnGroup {
+	width: 100%;
 }
 
 .btn {
 	background-color: var(--linkColor) !important;
 	color: var(--textColor) !important;
+	font-size: var(--fontSize);
 }
 
 .btn:hover {
@@ -17,15 +30,11 @@
 	background-color: var(--linkActiveColor) !important;
 }
 
-.modalHeader {
-	background-color: var(--cardOffColor);
-}
-
 .modalFooter {
 	background-color: var(--cardOnColor) !important;
 	justify-content: center !important;
 }
 
 .tip {
-	font-size: 0.8rem;
+	font-size: calc(var(--fontSize) * 0.9);
 }

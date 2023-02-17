@@ -1,23 +1,19 @@
-.footerRow {
-	height: fit-content;
-	flex-grow: 0;
-	max-height: 12vh;
+.footer {
+	height: 10vh;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: center;
+	width: 100vw;
+	margin: 0 auto;
+	background-color: var(--cardOffColor);
+	padding: 0 1rem;
+	bottom: 0;
+	position: fixed;
 }
 
-.footerCard {
-	border-radius: .375rem .375rem 0 0 !important;
-	border-bottom: 0;
-	padding: 0;
-}
-
-.footerTextHeader {
-	text-align: center;
-	font-size: var(--titleSize);
-	font-family: var(--standFont);
-	margin: 0;
-}
-
-.footerTextBody {
+.footerText {
 	text-align: center;
 	font-size: var(--textSize);
 	font-family: var(--standFont);
@@ -31,15 +27,13 @@
 }
 
 .BMACBtn {
-	height: 60px !important;
-	width: 217px !important;
+	width: clamp(1rem, 217px, 8rem) !important;
 }
 
 .rulesBtn {
-	color: var(--textColor);
-	background-color: var(--linkColor);
-	height: 60px !important;
-	width: 217px !important;
+	width: clamp(1rem, 217px, 8rem) !important;
+	color: var(--textColor) !important;
+	background-color: var(--linkColor) !important;
 }
 
 .rulesBtn:hover {
@@ -50,10 +44,4 @@
 .rulesBtn:active {
 	color: var(--textColor) !important;
 	background-color: var(--linkActiveColor) !important;
-}
-
-.footerContainer {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
 }

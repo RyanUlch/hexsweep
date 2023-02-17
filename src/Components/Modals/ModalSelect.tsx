@@ -38,13 +38,13 @@ const ModalSelect = (props: Props) => {
 	}
 
 	return (
-		<Modal show={props.show} >
+		<Modal className={classes.modal} show={props.show} >
 			<Modal.Header className={classes.modalHeader}>
 				<Modal.Title>Select Hint</Modal.Title>
 			</Modal.Header>
 			<Modal.Body className={`${classes.group}`}>Pick the Hint you would like on this cell:</Modal.Body>
 			<Modal.Footer className={`${classes.modalFooter}`}>
-				<ButtonGroup>
+				<ButtonGroup className={classes.btnGroup}>
 					<Button className={classes.btn} id={'0'} onClick={handleSelect}>
 						{`NW/SE Hint \u2921 (1)`}
 					</Button>

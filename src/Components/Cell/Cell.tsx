@@ -5,9 +5,10 @@ import Hexagon from '../Hexagon/Hexagon';
 import Arrow from '../Arrow/Arrow';
 // Helper imports:
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import type { Dispatch, SetStateAction } from 'react';
+import type { TouchEvent, TouchEventHandler, RefObject, MutableRefObject } from 'react';
 
 // Props interface:
 interface Props {
@@ -26,15 +27,30 @@ interface Props {
 // State being used for what the cell should have for BackgroundColor, and text.
 // No logic is run from Cell, and for display and click handler purposes.
 // Tests: "Click on Cell", "Handle Click passing to Props"
-
 const Cell = (props: Props) => {
-	// Handling clicking on the cell by sending row/col info up to parent
-	const handleClick = (event: React.SyntheticEvent) => {
-		event.preventDefault();
-		event.stopPropagation();
-		console.log(`Currently being dragged: ${props.isDragged}`)
+	const markSafe = () => {
 		if (!props.isDragged) {
 			props.onClick(props.row, props.col);
+		}
+	}
+	const markUnsafe = () => {
+		if (!props.isDragged) {
+			props.onFlag(props.row, props.col);
+		}
+	}
+
+	let clickCount = 0;
+	// Handling clicking on the cell by sending row/col info up to parent
+	const handleClick = (event: React.SyntheticEvent) => {
+		event = event || window.event;
+		event.preventDefault();
+		event.stopPropagation();
+		clickCount++;
+		if (clickCount === 1) {
+			setTimeout(function(){
+				(clickCount === 1) ? markSafe() : markUnsafe();
+				clickCount = 0;
+			}, 200);
 		}
 	};
 
@@ -67,18 +83,30 @@ const Cell = (props: Props) => {
 		})
 	}, [props.cellInfo.hint, props.gameNum]);
 
+// Check if the player is double tapping screen based on the timeout. Don't run single tap event if so to prevent rerenders
+	// Note had to use code duplication due to the fact that handling click and touch events are different
+	const tapCounter = (event: React.SyntheticEvent) => {
+		event = event || window.event;
+		event.stopPropagation();
+		clickCount++;
+		if (clickCount === 1) {
+			setTimeout(function(){
+				(clickCount === 1) ? markSafe() : markUnsafe();
+				clickCount = 0;
+			}, 200);
+		}
+	}
+
 	// Show hint text above Hexagon background. Hint number and symbol provided by parent
 	// Click event to send row and column info up to parent
 	return (
 		<div
 			onClick={handleClick}
 			onContextMenu={handleFlag}
+			onTouchStart={tapCounter}
 			className={`${classes.cell} ${props.cellInfo.cellState === 0 ? classes.inactive : props.cellInfo.cellState === 1 ? classes.safe : classes.bomb}`}
-			// className={props.cellInfo.isBomb ? classes.bomb : classes.safe}
 		>
-
-				{hint}
-			
+			{hint}
 			<Hexagon />
 		</div>
 	);

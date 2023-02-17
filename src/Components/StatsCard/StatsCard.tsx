@@ -19,12 +19,11 @@ const StatsCard = (props: Props) => {
 			<Card.Header className='cardHeader'>
 				Stats & Tools
 			</Card.Header>
-			<Card.Body className='cardBody'>
-				<Container className='p-0'>
-					<Row xs={4} md={1} className={classes.sideCoupleContainer}>
+			<Card.Body className={classes.body}>
+					<Row xs={4} md={1} className='m-0'>
 						<SideCouple isButton={true} isDisabled={props.info.freeHintsLeft === 0} isActive={props.info.freeHintNext} clickHandler={props.newHint}>
 							<p className={`${classes.coupleTitle} ${classes.linkTitle}`}>Hints:</p>
-							<p className={classes.coupleBody}>{`${props.info.freeHintsLeft}/${props.info.freeHintNum} Left`}</p>
+							<p className={classes.coupleBody}>{`${props.info.freeHintsLeft}/${props.info.freeHintNum}`}</p>
 						</SideCouple>
 						<SideCouple>
 							<p className={classes.coupleTitle}>Found:</p>
@@ -39,7 +38,6 @@ const StatsCard = (props: Props) => {
 							<p className={classes.coupleBody}>{props.info.gamesWon}/{props.info.gameNumber}</p>
 						</SideCouple>
 					</Row>
-				</Container>
 			</Card.Body>
 			<button className={`${classes.newGameLink} ${props.info.freeHintNext ? classes.newGameBtnActive : classes.newGameBtn}`} onClick={props.newGame}>
 				<Card.Footer>

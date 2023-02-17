@@ -6,11 +6,13 @@ import classes from './Game.module.css'
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
 // Component Imports:
 import ModalNewGame from '../Modals/ModalNewGame';
 import ModalSelect from '../Modals/ModalSelect';
 import StatsCard from '../StatsCard/StatsCard';
 import GameCard from '../GameCard/GameCard';
+import ModalGeneral from '../Modals/ModalGeneral';
 import { infoArrGen, bufferGen, updateHints, bombGen} from '../../helpers/setupGameHelpers';
 
 // Game handles state and logic of game-play.
@@ -34,6 +36,9 @@ const Game = () => {
 		modalHint: false,
 		hintCell: [-1, -1],
 		modalGame: false,
+		modalRules: false,
+		modalGen: false,
+		message: [<></>],
 	});
 
 	// Reference to the game container (where the user plays, is passed to get correct sizing);
@@ -45,74 +50,70 @@ const Game = () => {
 
 	// Handle when a user "left" clicks a cell. If it is a bomb, the user has lost early, if not show modal to let user select a hint
 	const handleCellClick = (row: number, col: number) => {
-		if (game.gameInfo.freeHintNext) {
-			giveFreeHint(row, col);
-			setGame(prev => {
-				return {
-					...prev, 
-					gameInfo: {
-						...prev.gameInfo,
-						freeHintNext: false,
-						freeHintsLeft: prev.gameInfo.freeHintsLeft-1,
+		if (!game.gameInfo.isFinished) {
+			if (game.gameInfo.freeHintNext) {
+				giveFreeHint(row, col);
+				checkIfEndGame();
+			} else if (game.gameArray && game.gameArray[row].rowArray[col].isBomb) {
+				setGame(prev => {
+					return {
+						...prev,
+						gameInfo: {
+							...prev.gameInfo,
+							isFinished: true,
+							clickedBomb: true,
+						}
 					}
-				}
-			})
-			checkIfEndGame();
-		} else if (game.gameArray && game.gameArray[row].rowArray[col].isBomb) {
-			setGame(prev => {
-				return {
-					...prev,
-					gameInfo: {
-						...prev.gameInfo,
-						isFinished: true,
-						clickedBomb: true,
+				})
+			} else if (game.gameArray && game.gameArray[row].rowArray[col].hint === -1) {
+				setGame(prev => {
+					return {
+						...prev, modalHint: true, hintCell: [row, col],
 					}
-				}
-			})
-		} else if (game.gameArray && game.gameArray[row].rowArray[col].hint === -1) {
-			setGame(prev => {
-				return {
-					...prev, modalHint: true, hintCell: [row, col],
-				}
-			})
+				})
+			}
 		}
 	}
 
 	// Handle whe a user "right" clicks a cell. Mark cell as flagged, or return it to unmarked if already flagged
 	const createFlag = (row: number, col: number) => {
-		setGame(prev => {
-			const newArray = [...prev.gameArray];
-			const newInfo = {...prev.gameInfo};
-			const currentState = newArray[row].rowArray[col].cellState;
-			if (currentState === 2) {
-				newArray[row].rowArray[col].cellState = 0;
-				newInfo.bombsFlagged = newInfo.bombsFlagged - 1;
-			} else if (currentState === 0) {
-				newArray[row].rowArray[col].cellState = 2;
-				newInfo.bombsFlagged = newInfo.bombsFlagged + 1;
-			}
-			return  {...prev, gameArray: newArray, gameInfo: newInfo};
-		});
-		checkIfEndGame();
+		if (!game.gameInfo.isFinished) {
+			setGame(prev => {
+				const newArray = [...prev.gameArray];
+				const newInfo = {...prev.gameInfo};
+				const currentState = newArray[row].rowArray[col].cellState;
+				if (currentState === 2) {
+					newArray[row].rowArray[col].cellState = 0;
+					newInfo.bombsFlagged = newInfo.bombsFlagged - 1;
+				} else if (currentState === 0) {
+					newArray[row].rowArray[col].cellState = 2;
+					newInfo.bombsFlagged = newInfo.bombsFlagged + 1;
+				}
+				return  {...prev, gameArray: newArray, gameInfo: newInfo};
+			});
+			checkIfEndGame();
+		}
 	}
 
 	// User wants a "free hint" Mark cell appropriately, and set the cell to give all hints.
 	const giveFreeHint = (row: number, col: number) => {
-		setGame(prev => {
-			const newArr = [...prev.gameArray];
-			const newInfo = {...prev.gameInfo};
-			newArr[row].rowArray[col].cellState = newArr[row].rowArray[col].isBomb ? 2 : 1;
-			newArr[row].rowArray[col].hint = 3;
-			newInfo.freeHintNext = false;
-			newInfo.freeHintsLeft = newInfo.freeHintsLeft -1;
-			// newInfo.bombsFlagged += newArr[row].rowArray[col].isBomb ? 1 : 0;
-			return {...prev, gameArray: newArr};
-		});
+		if (game.gameArray[row].rowArray[col].hint < 3) {
+			setGame(prev => {
+				const newArr = [...prev.gameArray];
+				const newInfo = {...prev.gameInfo};
+				newArr[row].rowArray[col].cellState = newArr[row].rowArray[col].isBomb ? 2 : 1;
+				newArr[row].rowArray[col].hint = 3;
+				newInfo.freeHintNext = false;
+				newInfo.freeHintsLeft = newInfo.freeHintsLeft -1;
+				newInfo.bombsFlagged += newArr[row].rowArray[col].isBomb ? 1 : 0;
+				return {...prev, gameInfo: newInfo, gameArray: newArr};
+			});
+			checkIfEndGame();
+		}
 	}
 
 	// Toggle free hint button, if set, next cell clicked will give a free hint, cancelled by hitting button again
 	const freeHintHandler = () => {
-		console.log(game.gameInfo.freeHintNext);
 		setGame(prev => {
 			return {...prev, gameInfo: {...prev.gameInfo, freeHintNext: !prev.gameInfo.freeHintNext}};
 		});
@@ -198,19 +199,13 @@ const Game = () => {
 	// Handle when the game has ended, can lose early by clicking on a cell with a bomb
 	useEffect(()=> {
 		if (game.gameInfo.isFinished && game.gameInfo.gameNumber > 0) {
+			const message: JSX.Element[] = [];
+			let gameWonStat = game.gameInfo.gamesWon;
 			if (!game.gameInfo.clickedBomb && verifyGame()) {
-				alert('You win!');
-				setGame(prev => {
-					return { 
-						...prev,
-						gameInfo: {
-							...prev.gameInfo,
-							gamesWon: prev.gameInfo.gamesWon+1,
-						}
-					}
-				})
+				message.push(<h3>You've Won! Congrats!</h3>, <p>Now why not try it again?</p>);
+				gameWonStat += 1;
 			} else {
-				alert('you lose!');
+				message.push(<h3>Oh... You've Lost...</h3>, <p>Don't like this game? I have another one: <a target='_blank' rel='noreferrer' href='https://Hexitaire.com'>Hexitaire!</a> A solitaire game using new cards.</p>)
 			}
 			setGame(prev => {
 				const newArr = [...prev.gameArray];
@@ -221,11 +216,14 @@ const Game = () => {
 				}
 				return {
 					...prev,
-					gameArray: newArr,
+					gameArr: newArr,
 					gameInfo: {
 						...prev.gameInfo,
 						isFinished: true,
+						gamesWon: gameWonStat, 
 					},
+					modalGen: true,
+					message: message,
 				}
 			})
 		}
@@ -298,18 +296,34 @@ const Game = () => {
 		});
 	}
 
+	const closeModalGen = () => {
+		setGame(prev => {
+			return {
+				...prev,
+				modalGen: false,
+				message: [<></>],
+			}
+		})
+	}
 	return (
 		<>
 			<ModalSelect show={game.modalHint} handleClose={closeModalHint} />
 			<ModalNewGame show={game.modalGame} handleClose={closeModalGame} />
-			<Row className={`${classes.gameRow}`}>
-				<Col xs={0} md={9} className={`${classes.gameCol}`}>
-					<GameCard info={game.gameInfo} arr={game.gameArray} cellClick={handleCellClick} createFlag={createFlag}/>
-				</Col>
-				<Col xs={0} md={3} className={classes.statsCol}>
-					<StatsCard info={game.gameInfo} newGame={restartGame} newHint={freeHintHandler} />
-				</Col>
-			</Row>	
+			<ModalGeneral show={game.modalGen} handleClose={closeModalGen}>{game.message}</ModalGeneral>
+			{/* <Container className={classes.playAreaContainer}> */}
+				{/* <Row className={`${classes.gameRow}`}> */}
+					{/* <Col className={`${classes.gameCol}`}> */}
+						<main className={classes.surroundingArea}>
+							<div className={classes.gameArea}>
+							<GameCard info={game.gameInfo} arr={game.gameArray} cellClick={handleCellClick} createFlag={createFlag}/>
+					
+					{/* <Col className={classes.statsCol}> */}
+							<StatsCard info={game.gameInfo} newGame={restartGame} newHint={freeHintHandler} />
+							</div>
+						</main>
+					{/* </Col> */}
+				{/* </Row>	 */}
+			{/* </Container> */}
 		</>
 	);
 };

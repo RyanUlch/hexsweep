@@ -12,27 +12,36 @@
 	overflow: hidden;
 }
 */
-/* @media (min-width: 768px) {
+@media (min-width: 768px) {
 	.playArea {
-		height: 100%;
+		/* height: 80% !important; */
 	}
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
 	.playArea {
-		height: 100%;
+		/* height: 80% !important; */
 	}
 }
- */
+
 
  .playArea {
-	height: 100%;
-	flex-grow: 1;
-	flex-basis: 100%;
+	/* max-height:%; */
+	/* height: 100%; */
+	/* flex-grow: 1;
+	flex-shrink: 1; */
 }
 
 .gameAreaBody {
 	flex-grow: 1;
-	background-color: var(--playBackgroundColor);
+	flex-shrink: 1;
+	flex-basis: 100%;
+	/* height: 50vh; */
+	/* background-color: var(--playBackgroundColor) !important; */
+	background-color: hsl(var(--bombCellHue), var(--bombCellSat), var(--cellLum)) !important;
 	overflow: hidden;
 }
+
+/* .rowContainer {
+	transform: translateY(var(--hexHalfHeight))
+} */

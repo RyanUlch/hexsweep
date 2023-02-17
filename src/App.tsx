@@ -9,14 +9,16 @@ import						'./index.scss';
 
 function App() {
 	return (
-		<div id='fullContainer'>
-		{/* // Set container to always display the whole height */}
-		<Container className='p-0 h-100' id='pageContainer'>
+		// <div id='fullContainer'>
+		// {/* // Set container to always display the whole height */}
+		// <Container id='pageContainer'>
+		<>
 			<Header />
 			<Game />
 			<Footer />
-		</Container>
-		</div>
+		</>
+		// </Container>
+		// </div>
 	);
 }
 

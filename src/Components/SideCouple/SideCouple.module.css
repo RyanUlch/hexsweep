@@ -1,20 +1,3 @@
-/*.sideCouple {
-	height: 100%;
-}
-
-.titleHolder:first-child { 
-	/* font-size: var(--titleSize); */
-	/* font-size: 0;
-}
-*/
-/* .body {
-	display: flex;
-	text-align: center;
-	justify-content: center;
-	align-items: center;
-} */
-
-
 .btn {
 	user-select: all;
 }
@@ -24,11 +7,11 @@
 }
 
 .btnBody {
-	background-color: var(--linkColor);
+	background-color: var(--linkColor) !important;
 }
 
 .btnBody:hover {
-	background-color: var(--linkHoverColor);
+	background-color: var(--linkHoverColor) !important;
 }
 
 .active {
@@ -43,6 +26,11 @@
 	background-color: var(--disabledColor) !important;
 }
 
+.disabled:hover {
+	background-color: var(--disabledColor) !important;
+}
+
 .column {
-	margin-bottom: 0.5rem;
+	/* margin-bottom: 0 !important; */
+	padding: 0.25rem !important;
 }

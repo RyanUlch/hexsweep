@@ -1,33 +1,28 @@
-@media (max-width: 768px) {
-	.gameRow {
-		display: flex;
-		flex-flow: column nowrap;
-		flex-grow: 1;
-		gap: 1rem;
-		justify-content: space-between;
-		height: 100%;
+@media (max-width: 767px) {
+	.gameArea {
+		flex-direction: column;
 	}
 }
 
 @media (min-width: 768px) {
-	.gameRow {
-		display: flex;
-		flex-flow: row wrap;
-		flex-grow: 1;
-		justify-content: space-between;
+	.gameArea {
+		flex-direction: row;
 	}
 	
 }
 
-.gameRow {
-	max-height: 80vh;
+.surroundingArea {
+	height: 100%;
+	width: 95%;
+	margin: 0 auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
-.gameCol {
+.gameArea {
+	height: 78vh;
+	width: 100%;
 	display: flex;
-	/* flex-direction: column; */
-	/* flex:none !important; */
-	/* flex-basis: 100%; */
-	flex-grow: 1;
-	/* height: 100%; */
+	gap: 1rem;
 }

@@ -1,5 +1,27 @@
 // @import '../public/custom.scss';
+
 @import "node_modules/bootstrap/scss/bootstrap";
+@viewport {
+	width: device-width ;
+	zoom: 1.0;
+	user-zoom: fixed;
+}
+
+@media (orientation: portrait) {
+	#root {
+		width: 100vmin !important;
+		height: 100vmax !important;
+	}
+}
+
+@media (orientation: landscape) {
+	#root {
+		width: 100vmax !important;
+		height: 100vmin !important;
+	}
+}
+
+
 :root {
 	/* Colors: */
 	--inactiveCellHue: 120;
@@ -36,7 +58,7 @@
 	--textColor: hsl(0, 0%, 20%);
 
 	/* Size Defaults */
-	--fontSize: clamp(0.8rem, 2vw, 2rem);
+	--fontSize: clamp(0.5rem, 2vw, 4rem);
 
 	// Cell properties (based off of height
 	// Using Calculator: https://www.omnicalculator.com/math/hexagon
@@ -57,7 +79,8 @@
 	--gameMargin: 1rem auto calc(1rem + (var(--cellHeight) / 2)) auto;
 	--gamePadding: 0 2rem;
 
-	--titleSize: clamp(1rem, 4vw, 3rem);
+	--titleSize: clamp(0.8rem, 6vw, 5rem);
+	--subTitleSize: clamp(0.8rem, 4vw, 5rem);
 	
 
 	// Fonts
@@ -72,13 +95,9 @@
 	justify-content: space-between;
 	gap: 1rem;
 	min-width: 460px;
+	padding: 0 1rem;
 
 	// min-height: 100vh;
-}
-
-#fullContainer {
-	height: 100vh;
-	width: 100vw;
 }
 
 *, html, body {
@@ -88,10 +107,21 @@
 }
 
 body {
-	height: 100vh;
-	width: 100vw;
+	// height: 100vh;
+	// width: 100vw;
 	overflow: hidden;
+	// margin: 0 1rem;
 	background-color: var(--pageBackground);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	/* Prevent user from overscrolling and refreshing page on mobile */
+	overscroll-behavior: contain;
+	/* Display/Position */
+	position:fixed;
+	margin:0;
+	padding:0;
+	width:100%;
+	height:100%;
 }
 
 p {

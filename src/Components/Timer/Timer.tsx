@@ -1,6 +1,8 @@
 // React Imports
 import { useEffect, useState, } from 'react';
 
+import classes from './Timer.module.css';
+
 interface Props {
 	isStopped: boolean,						// Whether timer should be running or not
 	gameNumber: number,							// To indicate the user clicked a new game without necessarily finishing the last one
@@ -51,7 +53,7 @@ const Timer = (props: Props) => {
 /* useEffect Section End */
 
 	// Simple display to show current time
-	return (<div style={{textAlign: 'center'}}>{timer[0] < 10 ? ('0'+timer[0]) : timer[0]}:{timer[1] < 10 ? ('0'+timer[1]) : timer[1]}</div>);
+	return (<div className={classes.timer}>{timer[0] < 10 ? ('0'+timer[0]) : timer[0]}:{timer[1] < 10 ? ('0'+timer[1]) : timer[1]}</div>);
 }
 
 export default Timer;
