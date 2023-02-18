@@ -51,21 +51,21 @@ const ClickDragArea = (props: Props) => {
 	return (
 		<div className={classes.dragAreaContainer}>
 
-		{props.gameStart
-			? 
-				<Draggable
-				onDrag={disableClick}
-				onStop={enableClick}
-				defaultPosition={{x: 0, y: 0}}//-parentSize[1]/4}}
-				// bounds={{left: parentSize[0]*-0.5, top: parentSize[1]*-2, right: parentSize[0]/2, bottom: 0}}
-			>
-				<div className={`${classes.dragArea}`}>
-					<div className={classes.rowContainer}>
-						{props.children}
+			{props.gameStart
+				? 
+					<Draggable
+					onDrag={disableClick}
+					onStop={enableClick}
+					defaultPosition={{x: -386, y: -543}}//-parentSize[1]/4}}
+					bounds={{left: -1200 , top: -1200, right: 400, bottom: 280}}
+				>
+					<div className={`${classes.dragArea}`}>
+						<div className={classes.rowContainer}>
+							{props.children}
+						</div>
 					</div>
-				</div>
-			</Draggable>
-		: <></>}
+				</Draggable>
+			: <></>}
 		</div>
 	)
 }

@@ -18,6 +18,8 @@
 	#root {
 		width: 100vmax !important;
 		height: 100vmin !important;
+		max-width: 1000px;
+		margin: 0 auto;
 	}
 }
 
@@ -30,8 +32,12 @@
 	--safeCellHue: 120;
 	--safeCellSat: 50%;
 
+	--safeHSL: hsl(var(--safeCellHue), var(--safeCellSat), var(--cellLum));
+
 	--bombCellHue: 0;
 	--bombCellSat: 50%;
+
+	--bombHSL: hsl(var(--bombCellHue), var(--bombCellSat), var(--cellLum));
 
 	--cellLum: 60%;
 	--cellHoverLum: 50%;
@@ -58,7 +64,7 @@
 	--textColor: hsl(0, 0%, 20%);
 
 	/* Size Defaults */
-	--fontSize: clamp(0.5rem, 2vw, 4rem);
+	--fontSize: clamp(0.5rem, 2vw, 1rem);
 
 	// Cell properties (based off of height
 	// Using Calculator: https://www.omnicalculator.com/math/hexagon
@@ -79,8 +85,8 @@
 	--gameMargin: 1rem auto calc(1rem + (var(--cellHeight) / 2)) auto;
 	--gamePadding: 0 2rem;
 
-	--titleSize: clamp(0.8rem, 6vw, 5rem);
-	--subTitleSize: clamp(0.8rem, 4vw, 5rem);
+	--titleSize: clamp(0.8rem, 6vw, 4rem);
+	--subTitleSize: clamp(0.8rem, 4vw, 4rem);
 	
 
 	// Fonts

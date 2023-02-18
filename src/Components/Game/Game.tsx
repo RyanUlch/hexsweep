@@ -310,20 +310,12 @@ const Game = () => {
 			<ModalSelect show={game.modalHint} handleClose={closeModalHint} />
 			<ModalNewGame show={game.modalGame} handleClose={closeModalGame} />
 			<ModalGeneral show={game.modalGen} handleClose={closeModalGen}>{game.message}</ModalGeneral>
-			{/* <Container className={classes.playAreaContainer}> */}
-				{/* <Row className={`${classes.gameRow}`}> */}
-					{/* <Col className={`${classes.gameCol}`}> */}
-						<main className={classes.surroundingArea}>
-							<div className={classes.gameArea}>
-							<GameCard info={game.gameInfo} arr={game.gameArray} cellClick={handleCellClick} createFlag={createFlag}/>
-					
-					{/* <Col className={classes.statsCol}> */}
-							<StatsCard info={game.gameInfo} newGame={restartGame} newHint={freeHintHandler} />
-							</div>
-						</main>
-					{/* </Col> */}
-				{/* </Row>	 */}
-			{/* </Container> */}
+			<main className={classes.surroundingArea}>
+				<div className={classes.gameArea}>
+					<GameCard info={game.gameInfo} arr={game.gameArray} cellClick={handleCellClick} createFlag={createFlag}/>
+					<StatsCard info={game.gameInfo} newGame={restartGame} newHint={freeHintHandler} />
+				</div>
+			</main>
 		</>
 	);
 };

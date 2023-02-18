@@ -1,6 +1,7 @@
 .footer {
 	height: 10vh;
 	display: flex;
+	max-width: 1000px;
 	flex-direction: row;
 	flex-wrap: nowrap;
 	justify-content: space-between;
@@ -11,11 +12,14 @@
 	padding: 0 1rem;
 	bottom: 0;
 	position: fixed;
+	border-radius: 0.5rem 0.5rem 0 0;
+	border: 1px solid var(--disabledColor);
+	border-bottom: 0;
 }
 
 .footerText {
 	text-align: center;
-	font-size: var(--textSize);
+	font-size: clamp(1rem, 3vw, 3rem);
 	font-family: var(--standFont);
 	margin: 0;
 }
@@ -24,6 +28,7 @@
 	text-decoration: none;
 	color: var(--hintBtn);
 	font-family: var(--fancyFont) !important;
+	font-size: var(--Size);
 }
 
 .BMACBtn {

@@ -10,7 +10,6 @@ interface Props {
 	arr: gameArray,
 	cellClick: (row: number, col: number)=>void,
 	createFlag: (row: number, col: number)=>void,
-
 }
 
 const GameCard = (props: Props) => {
@@ -22,7 +21,7 @@ const GameCard = (props: Props) => {
 
 	return (
 		<>
-			<Card ref={cardRef} className={classes.gameAreaBody}>
+			<Card ref={cardRef} className={`${props.info.isFinished ? classes.finished : classes.notFinished} ${classes.gameAreaBody}`}>
 				<ClickDragArea setDrag={setIsDragged} gameStart={props.info.gameNumber > 0} parentRef={cardRef} difficulty={props.info.difficulty}>
 					<div>
 						{props.arr.map((row, index) => {

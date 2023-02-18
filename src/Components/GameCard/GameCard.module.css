@@ -33,13 +33,23 @@
 }
 
 .gameAreaBody {
-	flex-grow: 1;
+	flex-grow: 3;
 	flex-shrink: 1;
-	flex-basis: 100%;
+	flex-basis: 80%;
 	/* height: 50vh; */
 	/* background-color: var(--playBackgroundColor) !important; */
-	background-color: hsl(var(--bombCellHue), var(--bombCellSat), var(--cellLum)) !important;
+	/* background-color: hsl(var(--bombCellHue), var(--bombCellSat), var(--cellLum)) !important; */
+	/* background-color: var(--bombHSL); */
+
 	overflow: hidden;
+}
+
+.finished {
+	background-color: var(--safeHSL) !important;
+}
+
+.notFinished {
+	background-color: var(--bombHSL) !important;
 }
 
 /* .rowContainer {

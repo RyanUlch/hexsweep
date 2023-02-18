@@ -2,6 +2,8 @@
 	/* justify-self: flex-end; */
 	/* align-self:flex-end; */
 	/* height: fit-content; */
+	/* max-width: 400px; */
+	flex-basis: 20%;
 }
 
 .newGameBtn {

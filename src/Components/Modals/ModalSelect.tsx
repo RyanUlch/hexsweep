@@ -42,7 +42,7 @@ const ModalSelect = (props: Props) => {
 			<Modal.Header className={classes.modalHeader}>
 				<Modal.Title>Select Hint</Modal.Title>
 			</Modal.Header>
-			<Modal.Body className={`${classes.group}`}>Pick the Hint you would like on this cell:</Modal.Body>
+			<Modal.Body className={`${classes.modalBody}`}>Pick the Hint you would like on this cell:</Modal.Body>
 			<Modal.Footer className={`${classes.modalFooter}`}>
 				<ButtonGroup className={classes.btnGroup}>
 					<Button className={classes.btn} id={'0'} onClick={handleSelect}>

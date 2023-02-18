@@ -2,14 +2,13 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	/* width: 400%; */
-	/* height: 400vh; */
-	/* width: 100vw; */
-	/* height: 100%; */
-	height: fit-content;
-	border: 6px solid hsl(var(--bombCellHue), var(--bombCellSat), var(--cellLum));
+	width: 1000px;
+	height: 1000px;
+
+	/* height: fit-content; */
+	/* border: 6px solid hsl(var(--bombCellHue), var(--bombCellSat), var(--cellLum)); */
 	border-radius: 50%;
-	padding: 10rem 25rem;
+	padding: 50rem;
 	/* margin: 50px; */
 	background-color: var(--playBackgroundColor);
 }
@@ -17,4 +16,9 @@
 .dragAreaContainer {
 	width: 100%;
 	height: 100%;
+}
+
+.rowContainer {
+	/* position: fixed; */
+	/* top: 500px; */
 }
