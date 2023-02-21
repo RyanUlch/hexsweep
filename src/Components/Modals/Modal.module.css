@@ -4,6 +4,8 @@
 
 .modalHeader {
 	background-color: var(--cardOffColor);
+	display: flex;
+	justify-content: center;
 }
 
 .modalBody {
@@ -37,6 +39,14 @@
 	justify-content: center !important;
 }
 
+.btnText {
+	font-size: var(--fontSize);
+}
+
 .tip {
 	font-size: calc(var(--fontSize) * 0.9);
+}
+
+.selectArrow {
+	width: clamp(1rem, 3vw, 3rem);
 }

@@ -1,62 +1,51 @@
+// CSS Import:
 import classes from './ClickDragArea.module.css'
+// React, React-Component Imports:
+import { useRef } from 'react';
 import Draggable from "react-draggable";
-import { useState, useEffect, useRef } from 'react';
-
-import type {DraggableEvent} from 'react-draggable';
-import type {Dispatch, SetStateAction} from 'react';
 
 interface Props {
 	children: JSX.Element | JSX.Element[],
 	difficulty: number,
-	parentRef: React.RefObject<HTMLDivElement>,
+	parentSize: number[],
 	gameStart: boolean,
-	setDrag: Dispatch<SetStateAction<boolean>>,
+	setDrag: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
+// ClickDragArea is the underlying "game board" is a fixed length and width so it can slide the spaces around.
 const ClickDragArea = (props: Props) => {
-	const [parentSize, setParentSize] = useState(()=> {
-		if (props.parentRef.current) {
-			return [props.parentRef.current.offsetWidth, props.parentRef.current.offsetHeight]
-		} else {
-			return [0, 0];
-		}
-		});
+	// Ref used to not let {disableClick} run multiple times
+	const setRef = useRef(false);
 
-	useEffect(() => {
-		setParentSize(() => {
-			if (props.parentRef.current) {
-				return [props.parentRef.current.offsetWidth, props.parentRef.current.offsetHeight];
-			} else {
-				return [0,0];
-			}
-		});
-	}, [props.parentRef.current?.offsetHeight, props.parentRef.current?.offsetWidth]);
-
-	const disableClick = (e: DraggableEvent) => {
-		e.preventDefault();
-		e.stopPropagation();
-		props.setDrag(true);
-	}
-
-	const enableClick = (e: any) => {
-		e.preventDefault();
-		e.stopPropagation();
+	// When user lifts up the mouse/touchscreen, allow user to click cells again
+	const enableClick = () => {
+		// Need to use timeout, as a race condition occurs with the click handler in {cell} when user stops dragging area
 		setTimeout(() => {
 			props.setDrag(false);
-		}, 100);
+			window.removeEventListener('mouseup', enableClick);
+			window.removeEventListener('touchend', enableClick);
+			setRef.current = false;
+		}, 10);
 	}
 
-	// const cardRef = useRef<HTMLDivElement>(null);
+	// When user clicks and drags on the play area, prevent the selection of cells. When the user stops, allow user to click again.
+	const disableClick = () => {
+		if (!setRef.current) {
+			props.setDrag(true);
+			setRef.current = true;
+			window.addEventListener('mouseup', enableClick);
+			window.addEventListener('touchend', enableClick);
+		}
+	}
 
 	return (
-		<div className={classes.dragAreaContainer}>
-
+		<div className={classes.dragAreaContainer} onTouchMove={disableClick}>
 			{props.gameStart
-				? 
-					<Draggable
+				? <Draggable
 					onDrag={disableClick}
-					onStop={enableClick}
-					defaultPosition={{x: -386, y: -543}}//-parentSize[1]/4}}
+					// Bounds/DefaultPosition are set statically as the size of the underlying container is also static
+						// It's so large that you won't be able to hit the edges
+					defaultPosition={{x: -(1000-props.parentSize[0])-props.parentSize[0]/4, y: -(1000-props.parentSize[1])-props.parentSize[1]/4}}
 					bounds={{left: -1200 , top: -1200, right: 400, bottom: 280}}
 				>
 					<div className={`${classes.dragArea}`}>
@@ -65,7 +54,7 @@ const ClickDragArea = (props: Props) => {
 						</div>
 					</div>
 				</Draggable>
-			: <></>}
+				: <></>}
 		</div>
 	)
 }

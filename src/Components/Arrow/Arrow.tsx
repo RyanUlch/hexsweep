@@ -1,24 +1,24 @@
-import { useState, useEffect } from 'react';
+// CSS import:
 import classes from './Arrow.module.css';
+// React Imports:
+import { useState, useEffect } from 'react';
 
 interface Props{
-	arrowType: number,
+	direction: number,
+	indicator: number,
 }
 
+// Arrow is a display type of the arrow image next to hints.
 const Arrow = (props: Props) => {
 	const [arrowTypeURL, setArrowTypeURL] = useState('');
 
 	useEffect(() => {
-		switch(props.arrowType) {
-			case 0: setArrowTypeURL('./images/NWSE-Arrow.png');break;
-			case 1: setArrowTypeURL('./images/NS-Arrow.png');break;
-			case 2: setArrowTypeURL('./images/NESW-Arrow.png');break;
-		}
-	}, [props.arrowType]);
+		setArrowTypeURL(`./images/${(props.direction === 0) ? 'nwse' : (props.direction === 1) ? 'ns' : 'nesw'}${props.indicator.toString()}.png`);
+	}, [props.direction, props.indicator]);
 
 	return (
 		<img className={classes.arrow} src={arrowTypeURL} alt=''/>
-	)
+	);
 }
 
 export default Arrow;

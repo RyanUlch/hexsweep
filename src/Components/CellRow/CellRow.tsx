@@ -1,18 +1,15 @@
+// CSS Import:
 import classes from './CellRow.module.css';
-import { useEffect } from 'react';
+// Component Imports:
 import Cell from '../Cell/Cell';
-import type { Dispatch, SetStateAction } from 'react';
 
-
-// Props interface:
 interface Props {
 	rowNum: number,
 	rowArray: cellInfo[],
 	buffer: number,
 	onClick: (row: number, col: number) => void,
 	onFlag: (row: number, col: number) => void,
-	isDragged: boolean,
-	setDragged: Dispatch<SetStateAction<boolean>>,
+	isDragged: React.Dispatch<React.SetStateAction<boolean>>,
 	gameNum: number,
 }
 
@@ -21,9 +18,10 @@ interface Props {
 const CellRow = (props: Props) => {
 	return (
 		<div className={classes.row}>
+			{/* Map through all rows passing props for the game handlers, as well as row information */}
 			{props.rowArray.map((cell, index) => {
 				return (
-					<Cell key={`r${props.rowNum}c${index}`} onClick={props.onClick} row={props.rowNum} col={index} cellInfo={cell} gameNum={props.gameNum} setDragged={props.setDragged} isDragged={props.isDragged} onFlag={props.onFlag}/>
+					<Cell key={`r${props.rowNum}c${index}`} onClick={props.onClick} row={props.rowNum} col={index} cellInfo={cell} gameNum={props.gameNum} isDragged={props.isDragged} onFlag={props.onFlag}/>
 				);
 			})}
 		</div>

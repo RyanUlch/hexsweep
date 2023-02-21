@@ -51,19 +51,19 @@ const ModalNewGame = (props: Props) => {
 			<Modal.Body className={`${classes.modalBody}`}>
 				<ButtonGroup className={classes.btnGroup}>
 					<Button className={classes.btn} variant="primary" id={'2'} onClick={handleSelect}>
-						{`Beginner (1)`}
+						<p className={classes.btnText}>Beginner (1)</p>
 					</Button>
 					<Button className={classes.btn} variant="primary" id={'3'} onClick={handleSelect}>
-						{`Easy (2)`}
+						<p className={classes.btnText}>Easy (2)</p>
 					</Button>
 					<Button className={classes.btn} variant="primary" id={'4'} onClick={handleSelect}>
-						{`Medium (3)`}
+						<p className={classes.btnText}>Medium (3)</p>
 					</Button>
 					<Button className={classes.btn} variant="primary" id={'5'} onClick={handleSelect}>
-						{`Hard (4)`}
+						<p className={classes.btnText}>Hard (4)</p>
 					</Button>
 					<Button className={classes.btn} variant="primary" id={'6'} onClick={handleSelect}>
-						{`Impossible (5)`}
+						<p className={classes.btnText}>Impossible (5)</p>
 					</Button>
 				</ButtonGroup>
 			</Modal.Body>

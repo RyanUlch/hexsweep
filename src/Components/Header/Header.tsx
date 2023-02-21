@@ -1,6 +1,3 @@
-// Bootstrap Imports:
-import Row from 'react-bootstrap/Row';
-import Card from 'react-bootstrap/Card';
 // Component Import:
 import classes from './Header.module.css'
 

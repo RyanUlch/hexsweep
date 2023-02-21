@@ -1,12 +1,7 @@
 // React imports:
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 // CSS import:
 import classes from './Game.module.css'
-// Bootstrap Imports:
-
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Container from 'react-bootstrap/Container';
 // Component Imports:
 import ModalNewGame from '../Modals/ModalNewGame';
 import ModalSelect from '../Modals/ModalSelect';
@@ -40,11 +35,6 @@ const Game = () => {
 		modalGen: false,
 		message: [<></>],
 	});
-
-	// Reference to the game container (where the user plays, is passed to get correct sizing);
-	const gameAreaRef = useRef<HTMLDivElement>(null);
-	// State to indicate if user is dragging the play area, used to prevent accidental clicks of cells when moving play area
-	const [isDragged, setIsDragged] = useState(false);
 
 /* Update Game Function Section - Passed functions to components to update GameArray/GameInfo */
 

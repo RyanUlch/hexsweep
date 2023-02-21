@@ -1,8 +1,6 @@
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import classes from './Modal.module.css';
-
 import ListGroup from 'react-bootstrap/ListGroup';
 
 interface Props {
@@ -53,11 +51,11 @@ const ModalRules = (props: Props) => {
 						</ul>
 					</ListGroup.Item>
 					<ListGroup.Item>
-						<h4>The game if you: </h4>
+						<h4>The game ends if you: </h4>
 							<ul>
-								<li>Hit a bomb: If you mark a space as safe, but it actually contains a bomb; the game ends immediately with a loss.</li>
+								<li>Hit a bomb - If you mark a space as safe, but it actually contains a bomb; the game ends immediately with a loss.</li>
 								<hr />
-								<li>Marked all spaces: Once all spaces are marked as safe/unsafe, the game ends telling you whether or not you've won.</li>
+								<li>Marked all spaces - Once all spaces are marked as safe/unsafe, the game ends telling you whether or not you've won.</li>
 							</ul>
 					</ListGroup.Item>
 					<ListGroup.Item>

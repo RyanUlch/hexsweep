@@ -2,10 +2,7 @@ import Card from 'react-bootstrap/Card';
 import classes from './StatsCard.module.css';
 import SideCouple from '../SideCouple/SideCouple';
 import Timer from '../Timer/Timer';
-
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import Button from 'react-bootstrap/Button';
 
 interface Props {
 	info: gameInfo,

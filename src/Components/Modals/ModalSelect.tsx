@@ -3,15 +3,18 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import classes from './Modal.module.css';
 
+import { useEffect, useCallback } from 'react';
+
 interface Props {
 	show: boolean
 	handleClose: (hintRequest: number)=>void
 }
 
 const ModalSelect = (props: Props) => {
-	const handleClose = (value: number) => {
+	// Close Modal with user selection
+	const handleClose = useCallback((value: number) => {
 		props.handleClose(value);
-	};
+	}, [props]);
 
 	// Handle user selecting hint through button
 	const handleSelect = (e: React.SyntheticEvent) => {
@@ -20,41 +23,45 @@ const ModalSelect = (props: Props) => {
 		handleClose(parseInt(selection));
 	}
 
-	// Set event listener to handle user selecting hint through key press
+
+
+	useEffect(() => {
+		// Set event listener to handle user selecting hint through key press
 		// Ignored if modal is not being shown
-	window.onkeydown = (e: KeyboardEvent) => {
-		e.preventDefault();
-		if (props.show) {
-			let value = -1;
-			switch(e.key) {
-				case "1": value = 0; break;
-				case "2": value = 1; break; 
-				case "3": value = 2; break;
-			}
-			if (value > -1) {
-				handleClose(value);
+		window.onkeydown = (e: KeyboardEvent) => {
+			e.preventDefault();
+			if (props.show) {
+				switch(e.key) {
+					case "1": handleClose(0); break;
+					case "2": handleClose(1); break; 
+					case "3": handleClose(2); break;
+				}
 			}
 		}
-	}
+		return ()=>{window.onkeydown = null}
+	}, [props.show, handleClose]);
 
 	return (
 		<Modal className={classes.modal} show={props.show} >
 			<Modal.Header className={classes.modalHeader}>
 				<Modal.Title>Select Hint</Modal.Title>
 			</Modal.Header>
-			<Modal.Body className={`${classes.modalBody}`}>Pick the Hint you would like on this cell:</Modal.Body>
-			<Modal.Footer className={`${classes.modalFooter}`}>
+			<Modal.Body className={`${classes.modalBody}`}>
+				<p>Pick the Hint you would like on this cell:</p>
 				<ButtonGroup className={classes.btnGroup}>
 					<Button className={classes.btn} id={'0'} onClick={handleSelect}>
-						{`NW/SE Hint \u2921 (1)`}
+						<p>NW/SE <img className={classes.selectArrow} src='./images/nwse.png' alt=''/> (1)</p>
 					</Button>
 					<Button className={classes.btn} id={'1'} onClick={handleSelect}>
-						{`N/S Hint \u2B0D (2)`}
+						<p>N/S <img className={classes.selectArrow} src='./images/ns.png' alt=''/> (2)</p>
 					</Button>
 					<Button className={classes.btn} id={'2'} onClick={handleSelect}>
-						{`NE/SW Hint \u2922 (3)`}
+						<p>NE/SW <img className={classes.selectArrow} src='./images/nesw.png' alt=''/> (3)</p>
 					</Button>
 				</ButtonGroup>
+				</Modal.Body>
+			<Modal.Footer className={`${classes.modalFooter}`}>
+				<p className={classes.tip}>Tip: You can select the hint with the number buttons (1-3)</p>
 			</Modal.Footer>
 		</Modal>
 	)

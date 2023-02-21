@@ -51,4 +51,9 @@
 	margin: 0;
 	visibility: visible;
 	font-size: var(--fontSize);
+	padding: 0 5px;
+}
+.bottom {
+	display: flex;
+	flex-direction: row;
 }
